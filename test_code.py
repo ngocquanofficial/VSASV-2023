@@ -1,7 +1,11 @@
-my_dict = {"a": 1, "b": 2, "c": 3}
+import torch
+import torch.nn as nn
 
-# Get the length of the dictionary
-dict_length = len(my_dict)
-
-# Print the length
-print("Length of the dictionary:", dict_length)
+m = nn.Sigmoid()
+loss = nn.BCELoss()
+input = torch.randn(3, 2, requires_grad=True)
+target = torch.rand(3, 2, requires_grad=False)
+print(m(input))
+print(target)
+output = loss(m(input), target)
+print(output)
