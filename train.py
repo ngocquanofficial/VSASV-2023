@@ -1,6 +1,8 @@
 import torch 
 import numpy as np
 from model import TripletLoss, Model
+import datetime
+timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
 def get_accuracy(pred_arr,original_arr):
     pred_arr = pred_arr.detach().numpy()
     original_arr = original_arr.numpy()
@@ -20,7 +22,8 @@ def train(model, optimizer, criterion, data_loader, num_epochs):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = model.to(device)
     train_loss=[]
-
+    
+    print("Start training process")
     for epoch in range(num_epochs):
         model.train().to(device)
         running_loss = []
@@ -38,22 +41,7 @@ def train(model, optimizer, criterion, data_loader, num_epochs):
                 print(f"Batch {i}: Loss: {loss.item()}")
         
         print(f"Epoch {epoch}: Loss average= {sum(train_loss) / len(train_loss)}")
-        
-        
-
-        
+    
+        model_path = 'model_{}_at_epoch{}'.format(timestamp, epoch)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-    return None
