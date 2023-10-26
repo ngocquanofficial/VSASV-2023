@@ -2,7 +2,7 @@ import torch
 import numpy as np
 from model import TripletLoss, Model
 import datetime
-timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
 def get_accuracy(pred_arr,original_arr):
     pred_arr = pred_arr.detach().numpy()
     original_arr = original_arr.numpy()
