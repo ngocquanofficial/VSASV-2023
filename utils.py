@@ -22,3 +22,8 @@ def load_embeddings(self):
         self.spk_model_dev = pk.load(f)
     with open(self.config.dirs.embedding + "spk_model_eval.pk", "rb") as f:
         self.spk_model_eval = pk.load(f)
+
+def load_pickle(url) :
+    with open(url, 'rb') as file:
+        loaded_data = pk.load(file)
+    return loaded_data

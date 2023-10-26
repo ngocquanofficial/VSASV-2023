@@ -12,9 +12,9 @@ import torch.optim as optim
 # From ngocquan with love
 from utils import *
 from train import train
-
+from utils import load_pickle
 def main(args):
-    output_dir = Path(args.output_dir)
+
     mode = args.mode
     if mode != "train" and mode != "test" :
         print("Type the mode equals train or test, run again")
@@ -23,9 +23,9 @@ def main(args):
     
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     
-    antispoof_file = args.aasist_embedding
-    verification_file = args.ecapa_embedding
-    speaker_data = args.speaker_embedding
+    antispoof_file = load_pickle(args.aasist_embedding)
+    verification_file = load_pickle(args.ecapa_embedding)
+    speaker_data = load_pickle(args.speaker_embedding)
     
     training_data = TrainingVLSPDataset(antispoof_file= antispoof_file, verification_file= verification_file, speaker_data= speaker_data)
     train_loader = DataLoader(dataset= training_data, batch_size= 4, shuffle= True)
@@ -49,21 +49,21 @@ if __name__ == "__main__":
         "--aasist_embedding",
         dest="aasist_embedding",
         type=str,
-        help="path to the file containing aasist embeddings",
+        help="path to the pickle file containing aasist embeddings",
         default="Dien di dung luoi :) ",
     )
     parser.add_argument(
         "--ecapa_embedding",
         dest="ecapa_embedding",
         type=str,
-        help="path to the file containing ecapa embeddings",
+        help="path to the pickle file containing ecapa embeddings",
         default="Dien di dung luoi :) ",
     )
     parser.add_argument(
         "--speaker_embedding",
         dest="speaker_embedding",
         type=str,
-        help="path to the file containing speaker embeddings",
+        help="path to the pickle file containing speaker embeddings",
         default="Dien di dung luoi :) ",
     )
     main(parser.parse_args())
