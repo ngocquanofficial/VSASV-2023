@@ -9,7 +9,7 @@ class TrainingVLSPDataset(Dataset) :
         Args:
             antispoof_file (dictioinary): a dictionary, key-value pair is filename-embedding vector created by anti-spoofing model
             verification_file (dictionary): _description_
-            speaker_data (dictionary): a dict with key= speaker id, values is a list contain 2 sub-list, each list contains path to bonafine and fake voices respectively.
+            speaker_data (dictionary): a dict with key= speaker id, values is a dict contain 2 sub-list, each list contains path to bonafine and fake voices respectively.
         """
         self.antispoof_emb = antispoof_file
         self.verify_emb = verification_file
@@ -55,7 +55,7 @@ class TrainingVLSPDataset(Dataset) :
                     
                     while True :
                         speaker = random.choice(list(self.speaker_data.keys()))
-                        if len(self.speaker_data[speaker]["spoofed_voice_clone"]) + len(self.speaker_data[speaker]["spoofed_replay"]) > 0 :
+                        if len(self.speaker_data[speaker]["spoofed_voice_clone"]) + len(self.speaker_data[speaker]["spoofed_replay"]) > 1 :
                             break
                     
                     # From here, the speaker has at least one spoofing voice
