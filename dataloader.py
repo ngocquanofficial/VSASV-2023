@@ -75,9 +75,15 @@ class TrainingVLSPDataset(Dataset) :
                 
                 target = random.choice(self.speaker_data[speaker]["bonafide"])
                 second = random.choice(voice_spoofing_list)
+                
+        # Return value       
+        target_verify_emb = torch.from_numpy(self.verify_emb[target]).to(self.device)
+        second_verify_emb = torch.from_numpy(self.verify_emb[second]).to(self.device)
+        second_antispoof_emb = torch.from_numpy(self.antispoof_emb[second]).to(self.device)
+        label_type = torch.tensor(label_type, dtype=torch.float, device= self.device)
                     
                     
-        return torch.from_numpy(self.verify_emb[target]).to(self.device), torch.from_numpy(self.verify_emb[second]).to(self.device), torch.from_numpy(self.antispoof_emb[second]).to(self.device), label_type.to(self.device, dtype=torch.float)                 
+        return target_verify_emb, second_verify_emb, second_antispoof_emb, label_type
                 
         
         
