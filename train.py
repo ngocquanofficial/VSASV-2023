@@ -2,6 +2,8 @@ import torch
 import numpy as np
 from model import TripletLoss, Model
 import datetime
+from tqdm import tqdm
+
 timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
 def get_accuracy(pred_arr,original_arr):
     pred_arr = pred_arr.detach().numpy()
@@ -28,7 +30,7 @@ def train(model, optimizer, criterion, data_loader, num_epochs):
         model.train().to(device)
         running_loss = []
         print(f'EPOCH {epoch}:')
-        for idx, data in enumerate(data_loader) :
+        for idx, data in enumerate(tqdm(data_loader)) :
             target_sv_emb, second_sv_emb, second_antisf_emb, label = data
             
             optimizer.zero_grad()
