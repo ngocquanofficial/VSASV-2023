@@ -66,16 +66,15 @@ class TrainingVLSPDataset(Dataset) :
                         speaker = random.choice(list(self.speaker_data.keys()))
                         if len(self.speaker_data[speaker]["spoofed_voice_clone"]) + len(self.speaker_data[speaker]["spoofed_replay"]) > 0 :
                             break
+                    # End the if statement to find speaker
                     
-                    # From here, the speaker has at least one spoofing voice
-                    
-                    # Merge all type of spoofing voice into 1 list, then random choose 1
-                    voice_spoofing_list = self.speaker_data[speaker]["spoofed_voice_clone"] + self.speaker_data[speaker]["spoofed_replay"]
-                    
-                    target = random.choice(self.speaker_data[speaker]["bonafide"])
-                    second = random.choice(voice_spoofing_list)
-        print(self.verify_emb[target])
-        print(self.verify_emb[second])
+                # From here, the speaker has at least one spoofing voice
+                
+                # Merge all type of spoofing voice into 1 list, then random choose 1
+                voice_spoofing_list = self.speaker_data[speaker]["spoofed_voice_clone"] + self.speaker_data[speaker]["spoofed_replay"]
+                
+                target = random.choice(self.speaker_data[speaker]["bonafide"])
+                second = random.choice(voice_spoofing_list)
                     
                     
         return torch.from_numpy(self.verify_emb[target]).to(self.device), torch.from_numpy(self.verify_emb[second]).to(self.device), torch.from_numpy(self.antispoof_emb[second]).to(self.device), label_type                    

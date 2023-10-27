@@ -30,7 +30,7 @@ def main(args):
     training_data = TrainingVLSPDataset(antispoof_embeddings= antispoof_embeddings, verification_embeddings= verification_embeddings, speaker_data= speaker_data)
     train_loader = DataLoader(dataset= training_data, batch_size= 4, shuffle= True)
     model = Model().to(device) 
-    criterion = torch.nn.MSELoss()
+    criterion = torch.nn.MSELoss().to(device)
     optimizer = optim.AdamW(model.parameters(), lr= 3e-5)
     if mode == "train" :
         train(model= model, optimizer= optimizer, criterion= criterion, data_loader= train_loader, num_epochs= 50)
