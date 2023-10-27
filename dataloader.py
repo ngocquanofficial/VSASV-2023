@@ -77,7 +77,7 @@ class TrainingVLSPDataset(Dataset) :
                 second = random.choice(voice_spoofing_list)
                     
                     
-        return torch.from_numpy(self.verify_emb[target]).to(self.device), torch.from_numpy(self.verify_emb[second]).to(self.device), torch.from_numpy(self.antispoof_emb[second]).to(self.device), label_type                    
+        return torch.from_numpy(self.verify_emb[target]).to(self.device), torch.from_numpy(self.verify_emb[second]).to(self.device), torch.from_numpy(self.antispoof_emb[second]).to(self.device), label_type.to(self.device, dtype=torch.float)                 
                 
         
         

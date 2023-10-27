@@ -23,6 +23,7 @@ def get_accuracy(pred_arr,original_arr):
 def train(model, optimizer, criterion, data_loader, num_epochs):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = model.to(device)
+    loss = loss.to(device)
     train_loss=[]
     
     print("Start training process")
