@@ -36,14 +36,31 @@ class TrainingVLSPDataset(Dataset) :
         """
         label_type = random.randint(0, 1)
         if label_type == 1 : # which means 2 data files are both bonafine, from 1 person
-            speaker = random.choice(list(self.speaker_data.keys())) # random choice a speaker id
+            
+            # Ensure that the speaker has at least 2 bonafine files
+            while True :
+                speaker = random.choice(list(self.speaker_data.keys())) # random choice a speaker id
+                if "bonafine" not in self.speaker_data[speaker] :
+                    self.speaker_data[speaker]["bonafine"] = []
+                if len(self.speaker_data[speaker]["bonafine"]) > 1 :
+                    break
+            
+            
             target, second = random.sample(self.speaker_data[speaker]["bonafide"], 2)
             
         elif label_type == 0 :
             second_type = random.randint(1, 2)
             
             if second_type == 1 : # Both 2 file is bonafile, but from different people
-                target_speaker, second_speaker = random.sample(self.speaker_data.keys(), 2)
+                while True :
+                    target_speaker, second_speaker = random.sample(self.speaker_data.keys(), 2)
+                    if "bonafine" not in self.speaker_data[target_speaker] :
+                        self.speaker_data[target_speaker]["bonafine"] = []
+                    if "bonafine" not in self.speaker_data[second_speaker] :
+                        self.speaker_data[second_speaker]["bonafine"] = []
+                    if len(self.speaker_data[target_speaker]["bonafine"]) > 0 and len(self.speaker_data[second_speaker]["bonafine"]) > 0 :
+                        break
+                     
                 target = random.choice(self.speaker_data[target_speaker]["bonafine"])
                 second = random.choice(self.speaker_data[second_speaker]["bonafine"])
             
@@ -54,6 +71,8 @@ class TrainingVLSPDataset(Dataset) :
                     self.speaker_data[speaker]["spoofed_voice_clone"] = []
                 if "spoofed_replay" not in self.speaker_data[speaker] :
                     self.speaker_data[speaker]["spoofed_replay"] = []
+                if "bonafine" not in self.speaker_data[speaker] :
+                    self.speaker_data[speaker]["bonafine"] = []
                 
                 if len(self.speaker_data[speaker]["spoofed_voice_clone"]) + len(self.speaker_data[speaker]["spoofed_replay"]) == 0 :
                     # There is not any spoofing voice for speaker
