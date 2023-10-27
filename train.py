@@ -31,11 +31,6 @@ def train(model, optimizer, criterion, data_loader, num_epochs):
         for idx, data in enumerate(data_loader) :
             target_sv_emb, second_sv_emb, second_antisf_emb, label = data
             
-            # Move data to the same device as the model
-            target_sv_emb = target_sv_emb.to(device)  
-            second_sv_emb = second_sv_emb.to(device)
-            second_antisf_emb = second_antisf_emb.to(device)
-            
             optimizer.zero_grad()
             output = model(target_sv_emb, second_sv_emb, second_antisf_emb)
             loss = criterion(output, label)
@@ -62,11 +57,13 @@ def test(model, criterion, data_loader) :
             float_output = output.item()
             print(output)
 
-data_loader = [(torch.rand(192, 1), torch.rand(192, 1), torch.rand(160, 1)), (torch.rand(192, 1), torch.rand(192, 1), torch.rand(160, 1))]
+
+## Just for testing
+# data_loader = [(torch.rand(192, 1), torch.rand(192, 1), torch.rand(160, 1)), (torch.rand(192, 1), torch.rand(192, 1), torch.rand(160, 1))]
             
-from model import Model
-model = Model()
-criterion = torch.nn.MSELoss()     
-test(model= model, criterion= criterion, data_loader= data_loader)      
+# from model import Model
+# model = Model()
+# criterion = torch.nn.MSELoss()     
+# test(model= model, criterion= criterion, data_loader= data_loader)      
         
     

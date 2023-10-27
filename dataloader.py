@@ -14,6 +14,7 @@ class TrainingVLSPDataset(Dataset) :
         self.antispoof_emb = antispoof_embeddings
         self.verify_emb = verification_embeddings
         self.speaker_data = speaker_data
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     
     def __len__(self) :
         return len(self.verify_emb.keys())
@@ -71,7 +72,7 @@ class TrainingVLSPDataset(Dataset) :
                     target = random.choice(self.speaker_data[speaker]["bonafine"])
                     second = random.choice(voice_spoofing_list)
                     
-        return self.verify_emb[target], self.verify_emb[second], self.antispoof_emb[second], label_type                    
+        return self.verify_emb[target].to(self.device), self.verify_emb[second].to(self.device), self.antispoof_emb[second].to(self.device), label_type                    
                 
         
         
