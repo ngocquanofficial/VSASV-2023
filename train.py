@@ -28,7 +28,7 @@ def train(model, optimizer, criterion, data_loader, num_epochs):
         model.train().to(device)
         running_loss = []
         print(f'EPOCH {epoch}:')
-        for i, data in enumerate(data_loader) :
+        for idx, data in enumerate(data_loader) :
             target_sv_emb, second_sv_emb, second_antisf_emb, label = data
             optimizer.zero_grad()
             output = model(target_sv_emb, second_sv_emb, second_antisf_emb)
@@ -37,11 +37,29 @@ def train(model, optimizer, criterion, data_loader, num_epochs):
             loss.backward()
             optimizer.step()
             
-            if i % 100 == 0 :
-                print(f"Batch {i}: Loss: {loss.item()}")
+            if idx % 100 == 0 :
+                print(f"Batch {idx}: Loss: {loss.item()}")
         
         print(f"Epoch {epoch}: Loss average= {sum(train_loss) / len(train_loss)}")
     
         model_path = 'model_{}_at_epoch{}'.format(timestamp, epoch)
 
+def test(model, criterion, data_loader) :
+    # Note that data_loader with shuffer = False, batch_size = 1
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    with torch.no_grad() :
+        model.eval().to(device)
+        print("Start testing process")
+        for idx, data in enumerate(data_loader) :
+            target_sv_emb, second_sv_emb, second_antisf_emb = data
+            output = model(target_sv_emb, second_sv_emb, second_antisf_emb)
+            print(output)
 
+data_loader = [(torch.rand(192, 1), torch.rand(192, 1), torch.rand(160, 1)), (torch.rand(192, 1), torch.rand(192, 1), torch.rand(160, 1))]
+            
+from model import Model
+model = Model()
+criterion = torch.nn.MSELoss()     
+test(model= model, criterion= criterion, data_loader= data_loader)      
+        
+    

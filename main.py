@@ -23,11 +23,11 @@ def main(args):
     
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     
-    antispoof_file = load_pickle(args.aasist_embedding)
-    verification_file = load_pickle(args.ecapa_embedding)
+    antispoof_embeddings = load_pickle(args.aasist_embedding)
+    verification_embeddings = load_pickle(args.ecapa_embedding)
     speaker_data = load_pickle(args.speaker_embedding)
     
-    training_data = TrainingVLSPDataset(antispoof_file= antispoof_file, verification_file= verification_file, speaker_data= speaker_data)
+    training_data = TrainingVLSPDataset(antispoof_embeddings= antispoof_embeddings, verification_embeddings= verification_embeddings, speaker_data= speaker_data)
     train_loader = DataLoader(dataset= training_data, batch_size= 4, shuffle= True)
     model = Model().to(device) 
     criterion = torch.nn.MSELoss()

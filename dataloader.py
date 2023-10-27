@@ -3,7 +3,7 @@ import torch
 from torch.utils.data import Dataset
 # use the embedding vector implemented from 2 model AASIST(antispoof-model) and ECAPA(verification-model)
 class TrainingVLSPDataset(Dataset) :
-    def __init__(self, antispoof_file, verification_file, speaker_data) :
+    def __init__(self, antispoof_embeddings, verification_embeddings, speaker_data) :
         """
 
         Args:
@@ -11,8 +11,8 @@ class TrainingVLSPDataset(Dataset) :
             verification_file (dictionary): _description_
             speaker_data (dictionary): a dict with key= speaker id, values is a dict contain 2 sub-list, each list contains path to bonafine and fake voices respectively.
         """
-        self.antispoof_emb = antispoof_file
-        self.verify_emb = verification_file
+        self.antispoof_emb = antispoof_embeddings
+        self.verify_emb = verification_embeddings
         self.speaker_data = speaker_data
     
     def __len__(self) :
@@ -48,6 +48,11 @@ class TrainingVLSPDataset(Dataset) :
             
             if second_type == 2 : # the second file is a spoofing
                 speaker = random.choice(list(self.speaker_data.keys()))
+                # Sometime speaker do not have both spoofed_voice_clone and spoofed_replay, so we have a solution:
+                if "spoofed_voice_clone" not in self.speaker_data[speaker] :
+                    self.speaker_data[speaker]["spoofed_voice_clone"] = []
+                if "spoofed_replay" not in self.speaker_data[speaker] :
+                    self.speaker_data[speaker]["spoofed_replay"] = []
                 
                 if len(self.speaker_data[speaker]["spoofed_voice_clone"]) + len(self.speaker_data[speaker]["spoofed_replay"]) == 0 :
                     # There is not any spoofing voice for speaker

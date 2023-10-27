@@ -14,7 +14,7 @@ class Model(nn.Module) :
         second_verify = torch.squeeze(second_verify)
         second_spoof = torch.squeeze(second_spoof)
         
-        x = torch.cat([target_verify, second_verify, second_spoof], dim= 1)
+        x = torch.cat([target_verify, second_verify, second_spoof])
         x = self.DNN_hidden_layer(x)
         x = self.fc_output(x) # shape (batchsize, 1)
         x = self.sigmoid(x)
