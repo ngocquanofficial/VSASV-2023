@@ -9,7 +9,7 @@ class TrainingVLSPDataset(Dataset) :
         Args:
             antispoof_file (dictioinary): a dictionary, key-value pair is filename-embedding vector created by anti-spoofing model
             verification_file (dictionary): _description_
-            speaker_data (dictionary): a dict with key= speaker id, values is a dict contain 2 sub-list, each list contains path to bonafine and fake voices respectively.
+            speaker_data (dictionary): a dict with key= speaker id, values is a dict contain 2 sub-list, each list contains path to bonafide and fake voices respectively.
         """
         self.antispoof_emb = antispoof_embeddings
         self.verify_emb = verification_embeddings
@@ -31,34 +31,32 @@ class TrainingVLSPDataset(Dataset) :
         self.verify_emb[target]: speaker verification embedding of the target wav file
         self.verify_emb[second]: speaker verification embedidng of the second wav file
         self.antispoof_emb[second]: anti-spoofing embedding of the second wav file
-        label_type: the label corresponding to 2 wav files, = 1 if two files are both bonafile, from the same person
+        label_type: the label corresponding to 2 wav files, = 1 if two files are both bonafide, from the same person
 
         """
         label_type = random.randint(0, 1)
-        if label_type == 1 : # which means 2 data files are both bonafine, from 1 person
+        if label_type == 1 : # which means 2 data files are both bonafide, from 1 person
             
-            # Ensure that the speaker has at least 2 bonafine files
+            # Ensure that the speaker has at least 2 bonafide files
             speaker = random.choice(list(self.speaker_data.keys())) # random choice a speaker id
             target, second = random.sample(self.speaker_data[speaker]["bonafide"], 2)
             
         elif label_type == 0 :
             second_type = random.randint(1, 2)
             
-            if second_type == 1 : # Both 2 file is bonafile, but from different people
+            if second_type == 1 : # Both 2 file is bonafide, but from different people
                 target_speaker, second_speaker = random.sample(self.speaker_data.keys(), 2)
            
-                target = random.choice(self.speaker_data[target_speaker]["bonafine"])
-                second = random.choice(self.speaker_data[second_speaker]["bonafine"])
+                target = random.choice(self.speaker_data[target_speaker]["bonafide"])
+                second = random.choice(self.speaker_data[second_speaker]["bonafide"])
             
-            if second_type == 2 : # the second file is a spoofing
+            elif second_type == 2 : # the second file is a spoofing
                 speaker = random.choice(list(self.speaker_data.keys()))
                 # Sometime speaker do not have both spoofed_voice_clone and spoofed_replay, so we have a solution:
                 if "spoofed_voice_clone" not in self.speaker_data[speaker] :
                     self.speaker_data[speaker]["spoofed_voice_clone"] = []
                 if "spoofed_replay" not in self.speaker_data[speaker] :
                     self.speaker_data[speaker]["spoofed_replay"] = []
-                if "bonafine" not in self.speaker_data[speaker] :
-                    self.speaker_data[speaker]["bonafine"] = []
                 
                 if len(self.speaker_data[speaker]["spoofed_voice_clone"]) + len(self.speaker_data[speaker]["spoofed_replay"]) == 0 :
                     # There is not any spoofing voice for speaker
@@ -66,7 +64,7 @@ class TrainingVLSPDataset(Dataset) :
                     
                     while True :
                         speaker = random.choice(list(self.speaker_data.keys()))
-                        if len(self.speaker_data[speaker]["spoofed_voice_clone"]) + len(self.speaker_data[speaker]["spoofed_replay"]) > 1 :
+                        if len(self.speaker_data[speaker]["spoofed_voice_clone"]) + len(self.speaker_data[speaker]["spoofed_replay"]) > 0 :
                             break
                     
                     # From here, the speaker has at least one spoofing voice
@@ -74,8 +72,11 @@ class TrainingVLSPDataset(Dataset) :
                     # Merge all type of spoofing voice into 1 list, then random choose 1
                     voice_spoofing_list = self.speaker_data[speaker]["spoofed_voice_clone"] + self.speaker_data[speaker]["spoofed_replay"]
                     
-                    target = random.choice(self.speaker_data[speaker]["bonafine"])
+                    target = random.choice(self.speaker_data[speaker]["bonafide"])
                     second = random.choice(voice_spoofing_list)
+        print(self.verify_emb[target])
+        print(self.verify_emb[second])
+                    
                     
         return torch.from_numpy(self.verify_emb[target]).to(self.device), torch.from_numpy(self.verify_emb[second]).to(self.device), torch.from_numpy(self.antispoof_emb[second]).to(self.device), label_type                    
                 
