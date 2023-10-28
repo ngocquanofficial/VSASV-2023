@@ -103,19 +103,6 @@ class TrainingVLSPDatasetWithTripleLoss(Dataset) :
         return len(self.verify_emb.keys())
     
     def __getitem__(self, index) :
-        # Randomly create a label first, and then create data base on label_type
-        """_summary_
-
-        Args:
-            index (_type_): _description_
-            
-            target, second are two wav file path,
-        Return: 
-        self.verify_emb[target]: speaker verification embedding of the target wav file
-        self.verify_emb[second]: speaker verification embedidng of the second wav file
-        self.antispoof_emb[second]: anti-spoofing embedding of the second wav file
-
-        """
             
         # Ensure that the speaker has at least 3 bonafide files by preprocessing data
         speaker = random.choice(list(self.speaker_data.keys())) # random choice a speaker id
@@ -130,14 +117,17 @@ class TrainingVLSPDatasetWithTripleLoss(Dataset) :
             
             if len(self.speaker_data[speaker]["spoofed_voice_clone"]) + len(self.speaker_data[speaker]["spoofed_replay"]) == 0 :
                 negative_type = 1
-                # continue sample the next example
+                # continue sample the next case
             else :
                 voice_spoofing_list = self.speaker_data[speaker]["spoofed_voice_clone"] + self.speaker_data[speaker]["spoofed_replay"]
                 negative_utterance = random.choice(voice_spoofing_list)
                 
         elif negative_type == 1 :
             # different speaker
-            second_speaker = random.choice(list(self.speaker_data.keys()).remove(speaker))
+            second_speaker = random.choice(list(self.speaker_data.keys()))
+            if second_speaker == speaker :
+                second_speaker = random.choice(list(self.speaker_data.keys()))
+                
             if "spoofed_voice_clone" not in self.speaker_data[second_speaker] :
                 self.speaker_data[second_speaker]["spoofed_voice_clone"] = []
             if "spoofed_replay" not in self.speaker_data[second_speaker] :
@@ -146,11 +136,11 @@ class TrainingVLSPDatasetWithTripleLoss(Dataset) :
             second_voice_list = self.speaker_data[second_speaker]["spoofed_voice_clone"] + self.speaker_data[second_speaker]["spoofed_replay"] + self.speaker_data[second_speaker]["bonafide"]
             negative_utterance = random.choice(second_voice_list)
             
-        anchor_emb = self.get_embedding(target, anchor_utterance)
-        positive_emb = self.get_embedding(target, positive_utterance)
-        negative_emb = self.get_embedding(target, negative_utterance)
+        anchor_tuple = self.get_embedding(target, anchor_utterance)
+        positive_tuple = self.get_embedding(target, positive_utterance)
+        negative_tuple = self.get_embedding(target, negative_utterance)
         
-        return anchor_emb, positive_emb, negative_emb
+        return anchor_tuple, positive_tuple, negative_tuple
                 
             
     def get_embedding(self, target, second) : 
@@ -161,6 +151,6 @@ class TrainingVLSPDatasetWithTripleLoss(Dataset) :
 
                     
                     
-        return torch.cat((target_verify_emb, second_verify_emb, second_antispoof_emb), dim= 0)
+        return (target_verify_emb, second_verify_emb, second_antispoof_emb)
                 
     
