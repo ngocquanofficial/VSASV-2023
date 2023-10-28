@@ -47,6 +47,7 @@ def train(model, optimizer, criterion, data_loader, num_epochs):
         print(f"Epoch {epoch}: Loss average= {sum(train_loss) / len(train_loss)}")
     
         model_path = 'model_{}_at_epoch{}'.format(timestamp, epoch)
+        torch.save(model, f'/kaggle/working/{model_path}.pth')
 
 def test(model, criterion, data_loader) :
     # Note that data_loader with shuffer = False, batch_size = 1

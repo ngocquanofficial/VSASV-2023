@@ -10,10 +10,7 @@ class Model(nn.Module) :
         self.sigmoid = nn.Sigmoid()
         
     def forward(self, target_verify, second_verify, second_spoof) :
-        target_verify = torch.squeeze(target_verify)
-        second_verify = torch.squeeze(second_verify)
-        second_spoof = torch.squeeze(second_spoof)
-        
+      
         x = torch.cat([target_verify, second_verify, second_spoof], dim= 1)
         x = self.DNN_hidden_layer(x)
         x = self.fc_output(x) # shape (batchsize, 1)

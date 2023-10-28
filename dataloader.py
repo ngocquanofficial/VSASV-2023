@@ -77,13 +77,90 @@ class TrainingVLSPDataset(Dataset) :
                 second = random.choice(voice_spoofing_list)
                 
         # Return value       
-        target_verify_emb = torch.from_numpy(self.verify_emb[target]).to(self.device)
-        second_verify_emb = torch.from_numpy(self.verify_emb[second]).to(self.device)
-        second_antispoof_emb = torch.from_numpy(self.antispoof_emb[second]).to(self.device)
+        target_verify_emb = torch.from_numpy(self.verify_emb[target]).squeeze().to(self.device)
+        second_verify_emb = torch.from_numpy(self.verify_emb[second]).squeeze().to(self.device)
+        second_antispoof_emb = torch.from_numpy(self.antispoof_emb[second]).squeeze().to(self.device)
         label_type = torch.tensor(label_type, dtype=torch.float, device= self.device)
                     
                     
         return target_verify_emb, second_verify_emb, second_antispoof_emb, label_type
                 
+class TrainingVLSPDatasetWithTripleLoss(Dataset) :
+    def __init__(self, antispoof_embeddings, verification_embeddings, speaker_data) :
+        """
+
+        Args:
+            antispoof_file (dictioinary): a dictionary, key-value pair is filename-embedding vector created by anti-spoofing model
+            verification_file (dictionary): _description_
+            speaker_data (dictionary): a dict with key= speaker id, values is a dict contain 2 sub-list, each list contains path to bonafide and fake voices respectively.
+        """
+        self.antispoof_emb = antispoof_embeddings
+        self.verify_emb = verification_embeddings
+        self.speaker_data = speaker_data
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    
+    def __len__(self) :
+        return len(self.verify_emb.keys())
+    
+    def __getitem__(self, index) :
+        # Randomly create a label first, and then create data base on label_type
+        """_summary_
+
+        Args:
+            index (_type_): _description_
+            
+            target, second are two wav file path,
+        Return: 
+        self.verify_emb[target]: speaker verification embedding of the target wav file
+        self.verify_emb[second]: speaker verification embedidng of the second wav file
+        self.antispoof_emb[second]: anti-spoofing embedding of the second wav file
+
+        """
+            
+        # Ensure that the speaker has at least 3 bonafide files by preprocessing data
+        speaker = random.choice(list(self.speaker_data.keys())) # random choice a speaker id
+        target, anchor_utterance, positive_utterance = random.sample(self.speaker_data[speaker]["bonafide"], 3)
+        negative_type = random.randint(0, 1)
+        if negative_type == 0 :
+            # same speaker, but spoof utterance
+            if "spoofed_voice_clone" not in self.speaker_data[speaker] :
+                self.speaker_data[speaker]["spoofed_voice_clone"] = []
+            if "spoofed_replay" not in self.speaker_data[speaker] :
+                self.speaker_data[speaker]["spoofed_replay"] = []
+            
+            if len(self.speaker_data[speaker]["spoofed_voice_clone"]) + len(self.speaker_data[speaker]["spoofed_replay"]) == 0 :
+                negative_type = 1
+                # continue sample the next example
+            else :
+                voice_spoofing_list = self.speaker_data[speaker]["spoofed_voice_clone"] + self.speaker_data[speaker]["spoofed_replay"]
+                negative_utterance = random.choice(voice_spoofing_list)
+                
+        elif negative_type == 1 :
+            # different speaker
+            second_speaker = random.choice(list(self.speaker_data.keys()).remove(speaker))
+            if "spoofed_voice_clone" not in self.speaker_data[second_speaker] :
+                self.speaker_data[second_speaker]["spoofed_voice_clone"] = []
+            if "spoofed_replay" not in self.speaker_data[second_speaker] :
+                self.speaker_data[second_speaker]["spoofed_replay"] = []
+                
+            second_voice_list = self.speaker_data[second_speaker]["spoofed_voice_clone"] + self.speaker_data[second_speaker]["spoofed_replay"] + self.speaker_data[second_speaker]["bonafide"]
+            negative_utterance = random.choice(second_voice_list)
+            
+        anchor_emb = self.get_embedding(target, anchor_utterance)
+        positive_emb = self.get_embedding(target, positive_utterance)
+        negative_emb = self.get_embedding(target, negative_utterance)
         
-        
+        return anchor_emb, positive_emb, negative_emb
+                
+            
+    def get_embedding(self, target, second) : 
+        # Return value       
+        target_verify_emb = torch.from_numpy(self.verify_emb[target]).squeeze().to(self.device)
+        second_verify_emb = torch.from_numpy(self.verify_emb[second]).squeeze().to(self.device)
+        second_antispoof_emb = torch.from_numpy(self.antispoof_emb[second]).squeeze().to(self.device)
+
+                    
+                    
+        return torch.cat((target_verify_emb, second_verify_emb, second_antispoof_emb), dim= 0)
+                
+    
