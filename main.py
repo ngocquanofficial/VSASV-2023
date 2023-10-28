@@ -4,14 +4,14 @@ import warnings
 from importlib import import_module
 from pathlib import Path
 from shutil import copy
-from dataloader import TrainingVLSPDataset
+from dataloader import TrainingVLSPDataset, TrainingVLSPDatasetWithTripleLoss
 from torch.utils.data import DataLoader
-from model import Model
+from model import Model, TripletLoss
 import torch
 import torch.optim as optim
 # From ngocquan with love
 from utils import *
-from train import train
+from train import train, train_with_triplet_loss
 from utils import load_pickle
 def main(args):
 
@@ -22,18 +22,28 @@ def main(args):
         return None
     
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    model = Model().to(device) 
     
     antispoof_embeddings = load_pickle(args.aasist_embedding)
     verification_embeddings = load_pickle(args.ecapa_embedding)
     speaker_data = load_pickle(args.speaker_embedding)
     
-    training_data = TrainingVLSPDataset(antispoof_embeddings= antispoof_embeddings, verification_embeddings= verification_embeddings, speaker_data= speaker_data)
-    train_loader = DataLoader(dataset= training_data, batch_size= 64, shuffle= True)
-    model = Model().to(device) 
-    criterion = torch.nn.MSELoss().to(device)
-    optimizer = optim.AdamW(model.parameters(), lr= 3e-5)
-    if mode == "train" :
-        train(model= model, optimizer= optimizer, criterion= criterion, data_loader= train_loader, num_epochs= 50)
+    if args.loss == "mse" :
+        training_data = TrainingVLSPDataset(antispoof_embeddings= antispoof_embeddings, verification_embeddings= verification_embeddings, speaker_data= speaker_data)
+        train_loader = DataLoader(dataset= training_data, batch_size= 64, shuffle= True)
+        criterion = torch.nn.MSELoss().to(device)
+        optimizer = optim.AdamW(model.parameters(), lr= 3e-5)
+        if mode == "train" :
+            train(model= model, optimizer= optimizer, criterion= criterion, data_loader= train_loader, num_epochs= 50)
+            
+    elif args.loss == 'triplet' :
+        training_data = TrainingVLSPDatasetWithTripleLoss(antispoof_embeddings= antispoof_embeddings, verification_embeddings= verification_embeddings, speaker_data= speaker_data)
+        train_loader = DataLoader(dataset= training_data, batch_size= 64, shuffle= True)
+        criterion = TripletLoss().to(device)
+        optimizer = optim.AdamW(model.parameters(), lr= 3e-5)
+        
+        if mode == "train" :
+            train_with_triplet_loss(model= model, optimizer= optimizer, criterion= criterion, data_loader= train_loader, num_epochs= 50)
     
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="VLSP2023 from Lab914")
@@ -65,5 +75,12 @@ if __name__ == "__main__":
         type=str,
         help="path to the pickle file containing speaker embeddings",
         default="Dien di dung luoi :) ",
+    )
+    parser.add_argument(
+        "--loss",
+        dest="loss",
+        type=str,
+        help="loss function type",
+        default="mse",
     )
     main(parser.parse_args())

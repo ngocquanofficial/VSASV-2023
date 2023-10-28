@@ -49,17 +49,36 @@ def train(model, optimizer, criterion, data_loader, num_epochs):
         model_path = 'model_{}_at_epoch{}'.format(timestamp, epoch)
         torch.save(model, f'/kaggle/working/{model_path}.pth')
 
-def test(model, criterion, data_loader) :
-    # Note that data_loader with shuffer = False, batch_size = 1
+def train_with_triplet_loss(model, optimizer, criterion, data_loader, num_epochs) :
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    with torch.no_grad() :
-        model.eval().to(device)
-        print("Start testing process")
-        for idx, data in enumerate(data_loader) :
-            target_sv_emb, second_sv_emb, second_antisf_emb = data
-            output = model(target_sv_emb, second_sv_emb, second_antisf_emb)
-            float_output = output.item()
-            print(output)
+    model = model.to(device)
+    criterion = criterion.to(device)
+    train_loss=[]
+    
+    print("Start training process")
+    for epoch in range(num_epochs):
+        model.train().to(device)
+        running_loss = []
+        print(f'EPOCH {epoch}:')
+        for idx, data in enumerate(tqdm(data_loader)) :
+            anchor_embs, positive_embs, negative_embs = data
+            
+            optimizer.zero_grad()
+            anchor = model(*anchor_embs)
+            positive = model(*positive_embs)
+            negative = model(*negative_embs)
+            loss = criterion(anchor, positive, negative)
+            train_loss.append(loss.item())
+            loss.backward()
+            optimizer.step()
+            
+            if idx % 100 == 0 :
+                print(f"Batch {idx}: Loss: {loss.item()}")
+        
+        print(f"Epoch {epoch}: Loss average= {sum(train_loss) / len(train_loss)}")
+    
+        model_path = 'model_{}_at_epoch{}'.format(timestamp, epoch)
+        torch.save(model, f'/kaggle/working/{model_path}.pth')
 
 
 ## Just for testing
