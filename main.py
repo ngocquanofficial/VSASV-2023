@@ -39,7 +39,7 @@ def main(args):
     elif args.loss == 'triplet' :
         training_data = TrainingVLSPDatasetWithTripleLoss(antispoof_embeddings= antispoof_embeddings, verification_embeddings= verification_embeddings, speaker_data= speaker_data)
         train_loader = DataLoader(dataset= training_data, batch_size= 32, shuffle= True)
-        criterion = TripletLoss(margin= 1).to(device)
+        criterion = TripletLoss(margin= 0.1*32).to(device)
         optimizer = optim.AdamW(model.parameters(), lr= 1e-4)
         
         if mode == "train" :
