@@ -1,4 +1,5 @@
 import torch 
+import torch.nn as nn
 import numpy as np
 from model import TripletLoss, Model
 import datetime
@@ -36,7 +37,7 @@ def train(model, optimizer, criterion, data_loader, num_epochs):
             
             optimizer.zero_grad()
             output = model(target_sv_emb, second_sv_emb, second_antisf_emb)
-            loss = criterion(output, label)
+            loss = criterion(nn.Sigmoid(output), label)
             train_loss.append(loss.item())
             loss.backward()
             optimizer.step()
