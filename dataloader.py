@@ -53,10 +53,6 @@ class TrainingVLSPDataset(Dataset) :
             elif second_type == 2 : # the second file is a spoofing
                 speaker = random.choice(list(self.speaker_data.keys()))
                 # Sometime speaker do not have both spoofed_voice_clone and spoofed_replay, so we have a solution:
-                if "spoofed_voice_clone" not in self.speaker_data[speaker] :
-                    self.speaker_data[speaker]["spoofed_voice_clone"] = []
-                if "spoofed_replay" not in self.speaker_data[speaker] :
-                    self.speaker_data[speaker]["spoofed_replay"] = []
                 
                 if len(self.speaker_data[speaker]["spoofed_voice_clone"]) + len(self.speaker_data[speaker]["spoofed_replay"]) == 0 :
                     # There is not any spoofing voice for speaker
@@ -109,12 +105,7 @@ class TrainingVLSPDatasetWithTripleLoss(Dataset) :
         target, anchor_utterance, positive_utterance = random.sample(self.speaker_data[speaker]["bonafide"], 3)
         negative_type = random.randint(0, 1)
         if negative_type == 0 :
-            # same speaker, but spoof utterance
-            if "spoofed_voice_clone" not in self.speaker_data[speaker] :
-                self.speaker_data[speaker]["spoofed_voice_clone"] = []
-            if "spoofed_replay" not in self.speaker_data[speaker] :
-                self.speaker_data[speaker]["spoofed_replay"] = []
-            
+            # same speaker, but spoof utterance          
             if len(self.speaker_data[speaker]["spoofed_voice_clone"]) + len(self.speaker_data[speaker]["spoofed_replay"]) == 0 :
                 negative_type = 1
                 # continue sample the next case
@@ -127,11 +118,6 @@ class TrainingVLSPDatasetWithTripleLoss(Dataset) :
             second_speaker = random.choice(list(self.speaker_data.keys()))
             if second_speaker == speaker :
                 second_speaker = random.choice(list(self.speaker_data.keys()))
-                
-            if "spoofed_voice_clone" not in self.speaker_data[second_speaker] :
-                self.speaker_data[second_speaker]["spoofed_voice_clone"] = []
-            if "spoofed_replay" not in self.speaker_data[second_speaker] :
-                self.speaker_data[second_speaker]["spoofed_replay"] = []
                 
             second_voice_list = self.speaker_data[second_speaker]["spoofed_voice_clone"] + self.speaker_data[second_speaker]["spoofed_replay"] + self.speaker_data[second_speaker]["bonafide"]
             negative_utterance = random.choice(second_voice_list)
