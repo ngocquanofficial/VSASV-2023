@@ -43,7 +43,7 @@ def main(args):
         validation_data = TrainingVLSPDataset(antispoof_embeddings= antispoof_embeddings, verification_embeddings= verification_embeddings, speaker_data= speaker_data)
         validation_loader = DataLoader(dataset= validation_data, batch_size= 1, shuffle= False)
         train_loader = DataLoader(dataset= training_data, batch_size= 32, shuffle= True)
-        criterion = nn.TripletMarginWithDistanceLoss(distance_function= lambda x, y: 1.0 - F.cosine_similarity(x, y), margin= 0.2)
+        criterion = nn.TripletMarginWithDistanceLoss(distance_function= lambda x, y: 1.0 - F.cosine_similarity(x, y), margin= 0.9)
         optimizer = optim.AdamW(model.parameters(), lr= 2e-5)
         
         if mode == "train" :
