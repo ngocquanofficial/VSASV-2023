@@ -16,7 +16,6 @@ class Model(nn.Module) :
         x = self.fc_output(x) # shape (batchsize, 32)
         # x = self.sigmoid(x)
         return x
-        
 
     def _make_layers(self, in_dim= 544, l_nodes= [512, 256, 128, 64]):
         l_fc = []
@@ -29,22 +28,4 @@ class Model(nn.Module) :
                     out_features = l_nodes[idx]))
             l_fc.append(torch.nn.LeakyReLU(negative_slope = 0.1))
         return torch.nn.Sequential(*l_fc)
-
-class TripletLoss(nn.Module):
-    """
-    Triplet loss
-    Takes embeddings of an anchor sample, a positive sample and a negative sample
-    """
-
-    def __init__(self, margin):
-        super(TripletLoss, self).__init__()
-        self.margin = margin
-
-    def forward(self, anchor, positive, negative, size_average=True):
-        distance_positive = (anchor - positive).pow(2).sum(1)  # .pow(.5)
-        distance_negative = (anchor - negative).pow(2).sum(1)  # .pow(.5)
-        # print(losses)
-        # print(f"Positive: {distance_positive}, Negative: {distance_negative}")
-        losses = F.relu(distance_positive - distance_negative + self.margin)
-        return losses.mean() if size_average else losses.sum()
     

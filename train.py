@@ -50,7 +50,7 @@ def train(model, optimizer, criterion, data_loader, num_epochs):
         model_path = 'model_{}_at_epoch{}'.format(timestamp, epoch)
         torch.save(model, f'/kaggle/working/{model_path}.pth')
 
-def train_with_triplet_loss(model, optimizer, criterion, data_loader, num_epochs) :
+def train_triplet_loss(model, optimizer, criterion, data_loader, num_epochs):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = model.to(device)
     criterion = criterion.to(device)
@@ -80,14 +80,6 @@ def train_with_triplet_loss(model, optimizer, criterion, data_loader, num_epochs
     
         model_path = 'model_{}_at_epoch{}'.format(timestamp, epoch)
         torch.save(model, f'/kaggle/working/{model_path}.pth')
-
-
-## Just for testing
-# data_loader = [(torch.rand(192, 1), torch.rand(192, 1), torch.rand(160, 1)), (torch.rand(192, 1), torch.rand(192, 1), torch.rand(160, 1))]
-            
-# from model import Model
-# model = Model()
-# criterion = torch.nn.MSELoss()     
-# test(model= model, criterion= criterion, data_loader= data_loader)      
+ 
         
     

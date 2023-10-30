@@ -142,7 +142,6 @@ class TrainingVLSPDatasetWithTripleLoss(Dataset) :
         
         return anchor_tuple, positive_tuple, negative_tuple
                 
-            
     def get_embedding(self, target, second) : 
         # Return value       
         target_verify_emb = torch.from_numpy(self.verify_emb[target]).squeeze().to(self.device)
