@@ -89,8 +89,7 @@ def train_triplet_loss(model, optimizer, criterion, data_loader, num_epochs, val
         with torch.no_grad():
             for i, vdata in enumerate(validation_loader):
                 target_verify_emb, second_verify_emb, second_antispoof_emb, vlabel = vdata
-                vinput = torch.cat([target_verify_emb, second_verify_emb, second_antispoof_emb], dim= 1)
-                voutput = model(vinput)
+                voutput = model(target_verify_emb, second_verify_emb, second_antispoof_emb)
                 epoch_output.append(voutput.item())
                 epoch_label.append(int(vlabel))
             current_eer = compute_eer(epoch_label, epoch_output, positive_label= 1)
