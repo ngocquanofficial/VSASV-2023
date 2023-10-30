@@ -9,6 +9,7 @@ from torch.utils.data import DataLoader
 from model import Model
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 import torch.optim as optim
 # From ngocquan with love
 from utils import *
@@ -39,12 +40,14 @@ def main(args):
             
     elif args.loss == 'triplet' :
         training_data = TrainingVLSPDatasetWithTripleLoss(antispoof_embeddings= antispoof_embeddings, verification_embeddings= verification_embeddings, speaker_data= speaker_data)
+        validation_data = TrainingVLSPDataset(antispoof_embeddings= antispoof_embeddings, verification_embeddings= verification_embeddings, speaker_data= speaker_data)
+        validation_loader = DataLoader(dataset= validation_data, batch_size= 1, shuffle= False)
         train_loader = DataLoader(dataset= training_data, batch_size= 32, shuffle= True)
-        criterion = nn.TripletMarginWithDistanceLoss(distance_function=nn.CosineSimilarity(), margin= 0.2)
+        criterion = nn.TripletMarginWithDistanceLoss(distance_function= lambda x, y: 1.0 - F.cosine_similarity(x, y), margin= 0.2)
         optimizer = optim.AdamW(model.parameters(), lr= 2e-5)
         
         if mode == "train" :
-            train_triplet_loss(model= model, optimizer= optimizer, criterion= criterion, data_loader= train_loader, num_epochs= 50)
+            train_triplet_loss(model= model, optimizer= optimizer, criterion= criterion, data_loader= train_loader, num_epochs= 50, validation_loader= validation_loader)
     
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="VLSP2023 from Lab914")

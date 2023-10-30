@@ -6,7 +6,7 @@ class Model(nn.Module) :
     def __init__(self) :
         super().__init__()
         self.DNN_hidden_layer = self._make_layers()
-        self.fc_output = torch.nn.Linear(64, 32, bias= False)
+        self.fc_output = torch.nn.Linear(16, 1, bias= False)
         self.sigmoid = nn.Sigmoid()
         
     def forward(self, target_verify, second_verify, second_spoof) :
@@ -14,10 +14,10 @@ class Model(nn.Module) :
         x = torch.cat([target_verify, second_verify, second_spoof], dim= 1)
         x = self.DNN_hidden_layer(x)
         x = self.fc_output(x) # shape (batchsize, 32)
-        # x = self.sigmoid(x)
+        x = self.sigmoid(x)
         return x
 
-    def _make_layers(self, in_dim= 544, l_nodes= [512, 256, 128, 64]):
+    def _make_layers(self, in_dim= 544, l_nodes= [512, 256, 128, 64, 16]):
         l_fc = []
         for idx in range(len(l_nodes)):
             if idx == 0:
