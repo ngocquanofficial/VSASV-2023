@@ -4,16 +4,16 @@ import warnings
 from importlib import import_module
 from pathlib import Path
 from shutil import copy
-from .dataloader import VietnamCeleb
+from detect_speaker.dataloader import VietnamCeleb
 from torch.utils.data import DataLoader
-from .model import SiameseNetwork, ContrastiveLoss
+from detect_speaker.model import SiameseNetwork, ContrastiveLoss
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 # From ngocquan with love
 from utils import *
-from .train import train
+from detect_speaker.train import train
 from utils import load_pickle
 def main(args):
 
