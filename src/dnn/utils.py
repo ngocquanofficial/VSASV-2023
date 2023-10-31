@@ -1,5 +1,6 @@
 import pickle as pk
 import sklearn
+from sklearn.metrics import roc_curve
 import numpy as np
 
 def load_embeddings(self):
@@ -38,7 +39,7 @@ def save_pickle(data, filename= "ngocquan.pk") :
 
 def compute_eer(label, pred, positive_label=1):
     # all fpr, tpr, fnr, fnr, threshold are lists (in the format of np.array)
-    fpr, tpr, threshold = sklearn.metrics.roc_curve(label, pred)
+    fpr, tpr, threshold = roc_curve(label, pred)
     fnr = 1 - tpr
 
     # the threshold of fnr == fpr
@@ -51,3 +52,7 @@ def compute_eer(label, pred, positive_label=1):
     # return the mean of eer from fpr and from fnr
     eer = (eer_1 + eer_2) / 2
     return eer
+
+label = [1,1,1,1,0,0,0,0]
+pred = [5, 5, 5, 0, 5, 0, 0, 0]
+print(compute_eer(label, pred))
