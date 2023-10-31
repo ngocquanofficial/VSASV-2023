@@ -1,3 +1,7 @@
+import os
+import sys 
+sys.path.append(os.getcwd()) # NOQA
+
 import random
 import torch
 from torch.utils.data import Dataset

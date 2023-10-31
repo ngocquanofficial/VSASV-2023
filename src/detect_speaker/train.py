@@ -1,7 +1,8 @@
-import torch 
 import os
 import sys 
 sys.path.append(os.getcwd()) # NOQA
+
+import torch 
 import datetime
 from tqdm import tqdm
 from src.dnn.utils import compute_eer, save_pickle

@@ -1,12 +1,16 @@
+import os
+import sys 
+sys.path.append(os.getcwd()) # NOQA
+
 import argparse
-from .dataloader import VietnamCeleb
+from src.detect_speaker.dataloader import VietnamCeleb
 from torch.utils.data import DataLoader
-from .model import SiameseNetwork, ContrastiveLoss
+from src.detect_speaker.model import SiameseNetwork, ContrastiveLoss
 import torch
 import torch.optim as optim
 # From ngocquan with love
-from dnn.utils import compute_eer,load_embeddings,load_pickle
-from .train import train
+from src.dnn.utils import compute_eer,load_embeddings,load_pickle
+from src.detect_speaker.train import train
 def main(args):
 
     mode = args.mode

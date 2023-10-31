@@ -1,6 +1,9 @@
 import torch 
 import torch.nn as nn
 import torch.nn.functional as F
+import os
+import sys 
+sys.path.append(os.getcwd()) # NOQA
 class SiameseNetwork(nn.Module):
     def __init__(self) :
         super().__init__()
