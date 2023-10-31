@@ -100,9 +100,9 @@ class TrainingVLSPDatasetWithTripleLoss(Dataset) :
     
     def __getitem__(self, index) :
             
-        # Ensure that the speaker has at least 3 bonafide files by preprocessing data
+        # Ensure that the speaker has at least 2 bonafide files by preprocessing data
         speaker = random.choice(list(self.speaker_data.keys())) # random choice a speaker id
-        target, anchor_utterance, positive_utterance = random.sample(self.speaker_data[speaker]["bonafide"], 3)
+        target, positive_utterance = random.sample(self.speaker_data[speaker]["bonafide"], 2)
         negative_type = random.randint(0, 1)
         if negative_type == 0 :
             # same speaker, but spoof utterance          
@@ -122,17 +122,16 @@ class TrainingVLSPDatasetWithTripleLoss(Dataset) :
             second_voice_list = self.speaker_data[second_speaker]["spoofed_voice_clone"] + self.speaker_data[second_speaker]["spoofed_replay"] + self.speaker_data[second_speaker]["bonafide"]
             negative_utterance = random.choice(second_voice_list)
             
-        anchor_tuple = self.get_embedding(target, anchor_utterance)
-        positive_tuple = self.get_embedding(target, positive_utterance)
-        negative_tuple = self.get_embedding(target, negative_utterance)
+        anchor_tuple = self.get_embedding(target)
+        positive_tuple = self.get_embedding(positive_utterance)
+        negative_tuple = self.get_embedding(negative_utterance)
         
         return anchor_tuple, positive_tuple, negative_tuple
                 
-    def get_embedding(self, target, second) : 
+    def get_embedding(self, target) : 
         # Return value       
         target_verify_emb = torch.from_numpy(self.verify_emb[target]).squeeze().to(self.device)
-        second_verify_emb = torch.from_numpy(self.verify_emb[second]).squeeze().to(self.device)
-        second_antispoof_emb = torch.from_numpy(self.antispoof_emb[second]).squeeze().to(self.device)
+        target_antispoof_emb = torch.from_numpy(self.antispoof_emb[target]).squeeze().to(self.device)
 
                     
                     
