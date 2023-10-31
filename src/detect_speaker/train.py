@@ -1,10 +1,10 @@
 import torch 
-import torch.nn as nn
-import numpy as np
-from .model import SiameseNetwork
+import os
+import sys 
+sys.path.append(os.getcwd()) # NOQA
 import datetime
 from tqdm import tqdm
-from utils import compute_eer, save_pickle
+from src.dnn.utils import compute_eer, save_pickle
 
 timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
 
@@ -58,4 +58,5 @@ def train(model, optimizer, criterion, data_loader, num_epochs, validation_loade
         torch.save(model, f'/kaggle/working/{model_path}.pth')
 
     save_pickle(eer, filename= "eer.pk")
+        
         

@@ -4,7 +4,7 @@ import numpy as np
 from model import Model
 import datetime
 from tqdm import tqdm
-from utils import compute_eer, save_pickle
+from .utils import compute_eer, save_pickle
 
 timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
 def get_accuracy(pred_arr,original_arr):

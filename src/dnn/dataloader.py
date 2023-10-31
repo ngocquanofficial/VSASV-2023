@@ -135,6 +135,6 @@ class TrainingVLSPDatasetWithTripleLoss(Dataset) :
 
                     
                     
-        return (target_verify_emb, second_verify_emb, second_antispoof_emb)
+        return (target_verify_emb, target_antispoof_emb, target_antispoof_emb)
                 
     

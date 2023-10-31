@@ -32,7 +32,7 @@ class SiameseNetwork(nn.Module):
 
 class ContrastiveLoss(torch.nn.Module):
 
-    def __init__(self, margin=2.0):
+    def __init__(self, margin=1.0):
         super(ContrastiveLoss, self).__init__()
         self.margin = margin
 
