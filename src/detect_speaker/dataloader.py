@@ -12,7 +12,7 @@ class VietnamCeleb(Dataset) :
         self.verify_emb = verification_embeddings
         self.speaker_data = speaker_data # a dictionary, each key is the speaker id, value is a list contain the path to the wav file.
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    
+
     def __len__(self) :
         return len(self.verify_emb.keys())
     

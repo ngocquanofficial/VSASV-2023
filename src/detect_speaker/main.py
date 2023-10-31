@@ -22,11 +22,11 @@ def main(args):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = SiameseNetwork().to(device) 
     
-    verification_embeddings = load_pickle(args.ecapa_embedding)
+    aasist_embeddings = load_pickle(args.aasist_embedding)
     speaker_data = load_pickle(args.speaker_embedding)
     
-    training_data = VietnamCeleb(verification_embeddings= verification_embeddings, speaker_data= speaker_data)
-    validation_data = VietnamCeleb(verification_embeddings= verification_embeddings, speaker_data= speaker_data)
+    training_data = VietnamCeleb(verification_embeddings= aasist_embeddings, speaker_data= speaker_data)
+    validation_data = VietnamCeleb(verification_embeddings= aasist_embeddings, speaker_data= speaker_data)
     validation_loader = DataLoader(dataset= validation_data, batch_size= 1, shuffle= False)
     train_loader = DataLoader(dataset= training_data, batch_size= 32, shuffle= True)
     criterion = ContrastiveLoss(margin= 1)
@@ -58,6 +58,13 @@ if __name__ == "__main__":
         dest="speaker_embedding",
         type=str,
         help="path to the pickle file containing speaker embeddings",
+        default="Dien di dung luoi :) ",
+    )
+    parser.add_argument(
+        "--aasist_embedding",
+        dest="aasist_embedding",
+        type=str,
+        help="path to the pickle file containing aasist embeddings",
         default="Dien di dung luoi :) ",
     )
     main(parser.parse_args())

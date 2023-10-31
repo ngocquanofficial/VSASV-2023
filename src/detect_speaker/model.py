@@ -5,10 +5,11 @@ import os
 import sys 
 sys.path.append(os.getcwd()) # NOQA
 class SiameseNetwork(nn.Module):
-    def __init__(self) :
+    def __init__(self, in_dim= 160) :
         super().__init__()
         self.DNN_hidden_layer = self._make_layers()
         self.sigmoid = nn.Sigmoid()
+        self.in_dim = in_dim
         
     def forward_one(self, x) :
         
@@ -16,6 +17,8 @@ class SiameseNetwork(nn.Module):
         return x
 
     def _make_layers(self, in_dim= 192, l_nodes= [192, 192, 192]):
+        in_dim = self.in_dim
+        l_nodes = [self.in_dim, self.in_dim, self.in_dim]
         l_fc = []
         for idx in range(len(l_nodes)):
             if idx == 0:
