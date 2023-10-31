@@ -38,7 +38,7 @@ def save_pickle(data, filename= "ngocquan.pk") :
 
 def compute_eer(label, pred, positive_label=1):
     # all fpr, tpr, fnr, fnr, threshold are lists (in the format of np.array)
-    fpr, tpr, threshold = sklearn.metrics.roc_curve(label, pred, positive_label)
+    fpr, tpr, threshold = sklearn.metrics.roc_curve(label, pred)
     fnr = 1 - tpr
 
     # the threshold of fnr == fpr
