@@ -1,7 +1,7 @@
 import torch 
 import torch.nn as nn
 import numpy as np
-from detect_speaker.model import SiameseNetwork
+from .model import SiameseNetwork
 import datetime
 from tqdm import tqdm
 from utils import compute_eer, save_pickle
