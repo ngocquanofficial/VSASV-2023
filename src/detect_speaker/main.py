@@ -20,7 +20,7 @@ def main(args):
         return None
     
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = SiameseNetwork(in_dim= 160).to(device)
+    model = SiameseNetwork().to(device) 
     
     aasist_embeddings = load_pickle(args.aasist_embedding)
     speaker_data = load_pickle(args.speaker_embedding)
