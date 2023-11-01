@@ -26,7 +26,7 @@ def main(args):
     speaker_data = load_pickle(args.speaker_embedding)
     
     training_data = TrainingAASIST(aasist_embeddings= aasist_embeddings, speaker_data= speaker_data)
-    validation_data = VietnamCeleb(aasist_embeddings= aasist_embeddings, speaker_data= speaker_data)
+    validation_data = TrainingAASIST(aasist_embeddings= aasist_embeddings, speaker_data= speaker_data)
     validation_loader = DataLoader(dataset= validation_data, batch_size= 1, shuffle= False)
     train_loader = DataLoader(dataset= training_data, batch_size= 32, shuffle= True)
     criterion = ContrastiveLoss(margin= 1)
