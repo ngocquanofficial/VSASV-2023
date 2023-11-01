@@ -5,7 +5,7 @@ import os
 import sys 
 sys.path.append(os.getcwd()) # NOQA
 class SiameseNetwork(nn.Module):
-    def __init__(self, in_dim= 160) :
+    def __init__(self, in_dim) :
         super().__init__()
         self.DNN_hidden_layer = self._make_layers()
         self.sigmoid = nn.Sigmoid()
