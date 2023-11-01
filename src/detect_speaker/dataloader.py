@@ -47,7 +47,7 @@ class TrainingAASIST(Dataset) :
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     def __len__(self) :
-        return len(self.verify_emb.keys())
+        return len(self.aasist_emb.keys())
     
     def __getitem__(self, index) :
         # Randomly create a label first, and then create data base on label_type
