@@ -5,7 +5,7 @@ sys.path.append(os.getcwd()) # NOQA
 import torch 
 import datetime
 from tqdm import tqdm
-from src.dnn.utils import compute_eer, save_pickle
+from src.naive_dnn.utils import compute_eer, save_pickle
 
 timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
 

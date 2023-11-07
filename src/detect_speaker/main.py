@@ -9,7 +9,7 @@ from src.detect_speaker.model import SiameseNetwork, ContrastiveLoss
 import torch
 import torch.optim as optim
 # From ngocquan with love
-from src.dnn.utils import compute_eer,load_embeddings,load_pickle
+from src.naive_dnn.utils import compute_eer,load_embeddings,load_pickle
 from src.detect_speaker.train import train
 def main(args):
 

@@ -9,7 +9,6 @@ class SiameseNetwork(nn.Module):
         super().__init__()
         self.DNN_hidden_layer = self._make_layers()
         self.sigmoid = nn.Sigmoid()
-
         
     def forward_one(self, x) :
         
@@ -46,3 +45,5 @@ class ContrastiveLoss(torch.nn.Module):
         neg = (label) * torch.pow(torch.clamp(self.margin - cosine_similarity, min=0.0), 2)
         loss_contrastive = torch.mean( pos + neg )
         return loss_contrastive
+
+print("Loaded")
