@@ -3,7 +3,6 @@ import sys
 sys.path.append(os.getcwd()) # NOQA
 import torch
 
-print("loaded")
 class Maxout(torch.nn.Module) :
     def __init__(self, num_units: int, axis: int = 1, **kwargs) :
         super().__init__(**kwargs)
@@ -16,7 +15,6 @@ class Maxout(torch.nn.Module) :
             input = torch.from_numpy(input)
             
         shape = list(input.shape) # get shape as list
-        print(f"Linear shape: {shape}")
         num_channels = shape[self.axis]
             
         if self.axis < 0 :
@@ -29,15 +27,12 @@ class Maxout(torch.nn.Module) :
         extended_shape[axis] = self.num_units
         k = num_channels // self.num_units
         extended_shape.insert(axis, k) 
-        print(extended_shape)
-        print(input.shape)
-        print(f"k= {k}")
+        
         # Change from (batchsize,..., num_channels,...) -> (batchsize, ..., num_channels//num_units, num_units,...)
         reshape_input = torch.reshape(input, extended_shape)
         max_values, max_indices = torch.max(reshape_input, axis, keepdim= False)
         output = max_values # only receive the max, not the max_indices
         
-        print(self.get_config())
         return output
     
     def get_config(self) :

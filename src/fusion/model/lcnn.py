@@ -84,10 +84,10 @@ class LCNN(nn.Module) :
             Maxout(output_dim//2, axis= 1)
         )
     
-x = torch.rand((4, 3, 100, 100))
-model = LCNN(input_dim= 3, num_label= 2)
-print(model(x).shape)
+# x = torch.rand((100, 3, 100, 100))
+# model = LCNN(input_dim= 3, num_label= 2)
+# print(model(x).shape)
 
-from torchsummary import summary
+# from torchsummary import summary
 
-summary(model, (1, 28, 28))
+# summary(model, ( 3, 100, 100))
