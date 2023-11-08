@@ -133,8 +133,7 @@ class TrainingVLSPDatasetWithTripleLoss(Dataset) :
         target_verify_emb = torch.from_numpy(self.verify_emb[target]).squeeze().to(self.device)
         target_antispoof_emb = torch.from_numpy(self.antispoof_emb[target]).squeeze().to(self.device)
 
-                    
-                    
+            
         return (target_verify_emb, target_antispoof_emb, target_antispoof_emb)
                 
     

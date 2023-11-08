@@ -1,3 +1,7 @@
+import os
+import sys 
+sys.path.append(os.getcwd()) # NOQA
+
 import numpy as np
 from sklearn.metrics import roc_curve
 

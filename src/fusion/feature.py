@@ -12,14 +12,14 @@ import pandas as pd
 import scipy
 from tqdm import tqdm
 
-from src.fusion.model.lcnn import LCNN
+from src.fusion.LCNN.model.lcnn import LCNN
 
 
 def _preEmphasis(wave: np.ndarray, p=0.97) -> np.ndarray:
     """Pre-Emphasis"""
     return scipy.signal.lfilter([1.0, -p], 1, wave)
 
-def _calc_stft(path: str) -> np.ndarray:
+def calc_stft_one_file(wave) -> np.ndarray:
     """Calculate STFT with librosa.
 
     Args:
@@ -28,18 +28,17 @@ def _calc_stft(path: str) -> np.ndarray:
     Returns:
         np.ndarray: A STFT spectrogram.
     """
-    wave, sr = librosa.load(path)
+    # wave, sr = librosa.load(path)
     wave = _preEmphasis(wave)
     steps = int(len(wave) * 0.0081)
     # calculate STFT
-    stft = librosa.stft(wave, n_fft=sr, win_length=1700, hop_length=steps, window="blackman")
+    stft = librosa.stft(wave, n_fft= 22050,win_length= 1700, hop_length=steps, window="blackman")
     amp_db = librosa.amplitude_to_db(np.abs(stft), ref=np.max)
-    print(amp_db.shape)
     amp_db = amp_db[:800, :].astype("float32")
-    print(amp_db.shape)
+
     return amp_db[..., np.newaxis]
 
-def calc_stft(paths_list: list) -> torch.Tensor :
+def calc_stft(waves_list) -> torch.Tensor :
     """
 
     This function extracts spectrograms from raw audio data by using FFT.
@@ -52,48 +51,48 @@ def calc_stft(paths_list: list) -> torch.Tensor :
     """
 
     data = []
-    for path in tqdm(paths_list):
+    for wave in tqdm(waves_list):
 
         # Calculate STFT
-        stft_spec = _calc_stft(path)
+        stft_spec = calc_stft_one_file(wave)
         data.append(stft_spec)
 
     np_output = np.array(data)
     return torch.from_numpy(np_output).permute(0, 3, 1, 2).to(torch.float32)
 
 
-def _calc_cqt(path: str) -> np.ndarray:
+def calc_cqt_one_file(wave, sr= 22050) -> np.ndarray:
     """Calculating CQT spectrogram
 
     Args:
-        path (str): Path to audio file.
+        wave: a wave extract from wav file
 
     Returns:
         np.ndarray: A CQT spectrogram.
     """
-    y, sr = librosa.load(path)
-    y = _preEmphasis(y)
-    cqt_spec = librosa.core.cqt(y, sr= sr)
+    # y, sr = librosa.load(path)
+    wave = _preEmphasis(wave)
+    cqt_spec = librosa.core.cqt(wave, sr= sr)
     cq_db = librosa.amplitude_to_db(np.abs(cqt_spec))  # Amplitude to dB.
     return cq_db
 
 
-def calc_cqt(paths_list: list, dir= "") -> torch.Tensor :
-    """Calculate spectrograms from raw audio data by using CQT.
+def calc_cqt(wave_list, dir= "") -> torch.Tensor :
+    """Calculate spectrograms from audio wave by using CQT.
 
     Please refer to `calc_stft` for arguments and returns
     They are almost same.
     """
     max_width = 200  # for resizing cqt spectrogram.
 
-    for i, path in enumerate(tqdm(paths_list)):
-        full_path = dir + path
+    for i, wave in enumerate(tqdm(wave_list)):
+        # full_path = dir + path
         # Calculate CQT spectrogram
-        cqt_spec = _calc_cqt(full_path)
+        cqt_spec = calc_cqt_one_file(wave)
 
         height = cqt_spec.shape[0]
         if i == 0:
-            resized_data = np.zeros((len(paths_list), height, max_width))
+            resized_data = np.zeros((len(wave_list), height, max_width))
 
         # Truncate
         if max_width <= cqt_spec.shape[1]:
@@ -138,16 +137,16 @@ def save_feature(feature: np.ndarray, path: str):
         pickle.dump(feature, web, protocol=4)
         
 # TEST
-filenames = ["src/fusion/file_example_WAV_2MG.wav", "src/fusion/file_example_WAV_1MG.wav"]
-data = calc_stft(filenames)
-# data = torch.from_numpy(data).permute(0, 3, 1, 2)
+# filenames = ["src/fusion/file_example_WAV_2MG.wav", "src/fusion/file_example_WAV_1MG.wav"]
+# data = calc_stft(filenames)
+# # data = torch.from_numpy(data).permute(0, 3, 1, 2)
 
-data_cqt = calc_cqt(filenames)
-# data_cqt = torch.from_numpy(data_cqt).permute(0, 3, 1, 2)
-# data_cqt = data_cqt.to(torch.float32)
-print(data_cqt)
+# data_cqt = calc_cqt(filenames)
+# # data_cqt = torch.from_numpy(data_cqt).permute(0, 3, 1, 2)
+# # data_cqt = data_cqt.to(torch.float32)
+# print(data_cqt)
 
-model = LCNN(input_dim= 1, num_label= 50)
-# print(model(data).shape)
+# model = LCNN(input_dim= 1, num_label= 50)
+# # print(model(data).shape)
 
-print(model(data_cqt).shape)
+# print(model(data_cqt).shape)

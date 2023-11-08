@@ -1,3 +1,7 @@
+import os
+import sys 
+sys.path.append(os.getcwd()) # NOQA
+
 import numpy as np
 import IPython.display as ipd
 from scipy.signal.windows import hamming
@@ -111,7 +115,7 @@ def trim_and_concat_all(speech, vad, samplerate):
             break
     return speech[start*hop_len:end*hop_len]
 
-def vad(src_path, des_folder= "") :
+def vad_one_file(src_path, des_folder= "") :
     """NOTICE THAT: Move pwd to the desire folder before running vad
 
     """
@@ -132,7 +136,13 @@ def vad(src_path, des_folder= "") :
     filename = src_path.split("/")[-1]
     # save 
     sf.write(filename , speech, samplerate)
+    return speech
 
-vad("src/fusion/00000001.wav")
+def voice_active_detection(paths) :
+    data = []
+    for path in paths :
+        data.append(vad_one_file(path))
+    
+    return data
 
 

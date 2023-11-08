@@ -2,7 +2,7 @@ import os
 import sys 
 sys.path.append(os.getcwd()) # NOQA
 
-from src.fusion.model.layers import Maxout
+from src.fusion.LCNN.model.layers import Maxout
 import torch
 import torch.nn as nn
 from torch.nn import Conv2d
