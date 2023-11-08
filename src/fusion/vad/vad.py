@@ -3,6 +3,7 @@ import IPython.display as ipd
 from scipy.signal.windows import hamming
 from scipy.io import wavfile
 import librosa
+import soundfile as sf
 
 def read_wav(filename):
     """
@@ -89,11 +90,13 @@ def nrg_vad(xframes,thr=0.2):
             xvad[i] = 0.
     return xvad
 
-def trim_and_concat_all(speech, vad):
+def trim_and_concat_all(speech, vad, samplerate):
     """
         trim the silence from the beginning and end of the speech
         concatenate all the speech segments
     """
+    win_len = int(samplerate*0.025)
+    hop_len = int(samplerate*0.010)
     speech = speech.squeeze()
     vad = vad.squeeze()
     start = 0
@@ -108,32 +111,28 @@ def trim_and_concat_all(speech, vad):
             break
     return speech[start*hop_len:end*hop_len]
 
-test_file = "src/fusion/00000001.wav"
-samplerate,data = read_wav(test_file)
-ipd.Audio(data, rate=samplerate)
+def vad(src_path, des_folder= "") :
+    """NOTICE THAT: Move pwd to the desire folder before running vad
 
-win_len = int(samplerate*0.025)
-hop_len = int(samplerate*0.010)
-init_silence_len = int(0.1*samplerate) # it is assumed that the first 100ms doesnt contain any speech
-sframes = enframe(data,win_len,hop_len) # rows: frame index, cols: each frame
+    """
+    samplerate, data = read_wav(src_path)
+    ipd.Audio(data, rate=samplerate)
 
-vad2 = nrg_vad(sframes)
-x = deframe(vad2,win_len,hop_len)
-x = x.squeeze()
+    win_len = int(samplerate*0.025)
+    hop_len = int(samplerate*0.010)
+    init_silence_len = int(0.1*samplerate) # it is assumed that the first 100ms doesnt contain any speech
+    sframes = enframe(data,win_len,hop_len) # rows: frame index, cols: each frame
 
-speech = trim_and_concat_all(data, vad2)
+    vad2 = nrg_vad(sframes)
+    x = deframe(vad2,win_len,hop_len)
+    x = x.squeeze()
 
-# save 
-# wavfile.write('speech.wav', samplerate, speech)
-import soundfile as sf
-sf.write('speech.wav', speech, samplerate)
+    speech = trim_and_concat_all(data, vad2, samplerate)
 
-# sr = samplerate
-# steps = int(len(speech) * 0.0081)
-# # calculate STFT
-# stft = librosa.stft(speech, n_fft=sr, win_length=1700, hop_length=steps, window="blackman")
-# amp_db = librosa.amplitude_to_db(np.abs(stft), ref=np.max)
-# print(amp_db.shape)
-# amp_db = amp_db[:800, :].astype("float32")
-# print(amp_db.shape)
+    filename = src_path.split("/")[-1]
+    # save 
+    sf.write(filename , speech, samplerate)
+
+vad("src/fusion/00000001.wav")
+
 
