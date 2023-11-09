@@ -21,7 +21,7 @@ def main(args):
         return None
     
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    model = LCNN(input_dim=0, num_label= 2).to(device) 
+    model = LCNN(input_dim= 1, num_label= 2).to(device) 
     
     training_file = load_pickle(args.training_file)
     validation_file = load_pickle(args.validation_file)

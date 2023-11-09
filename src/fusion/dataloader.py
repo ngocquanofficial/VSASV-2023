@@ -41,9 +41,9 @@ class TrainingDataLCNN(Dataset) :
         after_vad, sr = vad_one_file(audio_path)
         
         if self.type == "stft" :
-            data = calc_stft_one_file(after_vad, sr).squeeze(2)
+            data = calc_stft_one_file(after_vad, sr).permute(2, 0, 1)
         elif self.type == "cqt" :
-            data = calc_cqt_one_file(after_vad, sr).squeeze(2)
+            data = calc_cqt_one_file(after_vad, sr).permute(2, 0, 1)
         return data, label
             
 class ValidationDataLCNN(Dataset) :
