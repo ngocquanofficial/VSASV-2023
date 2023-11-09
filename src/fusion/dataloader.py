@@ -19,13 +19,16 @@ print("DONE")
 
 # use the embedding vector implemented from 2 model AASIST(antispoof-model) and ECAPA(verification-model)
 class TrainingDataLCNN(Dataset) :
-    def __init__(self, path_list, type= "stft") :
+    def __init__(self, path_list,stft_embedding, cqt_embedding, type= "stft") :
         self.type = type
         self.path_list = path_list
+        self.stft_embedding = stft_embedding
+        self.cqt_embedding = cqt_embedding
+        
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     def __len__(self) :
-        return len(self.path_list)
+        return len(self.stft_embedding)
 
     def __getitem__(self, index) :
         audio_path = random.choice(self.path_list)
@@ -37,27 +40,28 @@ class TrainingDataLCNN(Dataset) :
         else :
             print("ERROR Occur at Dataloader")
             label = None
-            
-        after_vad, sr = vad_one_file(audio_path)
+            print(audio_type, "LABEL")
         
         if self.type == "stft" :
-            data = calc_stft_one_file(after_vad, sr).permute(2, 0, 1)
-            # Ensure each shape is equal 
-            data = data[:, :, :124]
+            data = self.stft_embedding(audio_path)
+
         elif self.type == "cqt" :
-            data = calc_cqt_one_file(after_vad, sr).permute(2, 0, 1)
-        label = 1
-        label = torch.tensor(label, dtype= torch.int32, device= self.device)
+            data = self.cqt_embedding(audio_path)
+
+        label = torch.tensor(label, dtype= torch.int64, device= self.device)
         return data.to(self.device), label
             
 class ValidationDataLCNN(Dataset) :
-    def __init__(self, path_list, type= "stft") :
+    def __init__(self, path_list,stft_embedding, cqt_embedding, type= "stft") :
         self.type = type
         self.path_list = path_list
+        self.stft_embedding = stft_embedding
+        self.cqt_embedding = cqt_embedding
+        
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     def __len__(self) :
-        return len(self.path_list)
+        return len(self.stft_embedding)
 
     def __getitem__(self, index) :
         audio_path = random.choice(self.path_list)
@@ -69,15 +73,17 @@ class ValidationDataLCNN(Dataset) :
         else :
             print("ERROR Occur at Dataloader")
             label = None
-            
-        after_vad, sr = vad_one_file(audio_path)
+            print(audio_type, "LABEL")
         
         if self.type == "stft" :
-            data = calc_stft_one_file(after_vad, sr).squeeze(2)
+            data = self.stft_embedding(audio_path)
+
         elif self.type == "cqt" :
-            data = calc_cqt_one_file(after_vad, sr).squeeze(2)
-            
-        return data, label
+            data = self.cqt_embedding(audio_path)
+
+        label = torch.tensor(label, dtype= torch.int64, device= self.device)
+        return data.to(self.device), label
+        
 
 dataload = TrainingDataLCNN(filenames)
 data, label = dataload[0]
