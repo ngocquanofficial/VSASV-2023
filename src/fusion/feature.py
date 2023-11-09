@@ -19,7 +19,7 @@ def _preEmphasis(wave: np.ndarray, p=0.97) -> np.ndarray:
     """Pre-Emphasis"""
     return scipy.signal.lfilter([1.0, -p], 1, wave)
 
-def calc_stft_one_file(wave) -> np.ndarray:
+def calc_stft_one_wave(wave) -> np.ndarray:
     """Calculate STFT with librosa.
 
     Args:
@@ -54,14 +54,14 @@ def calc_stft(waves_list) -> torch.Tensor :
     for wave in tqdm(waves_list):
 
         # Calculate STFT
-        stft_spec = calc_stft_one_file(wave)
+        stft_spec = calc_stft_one_wave(wave)
         data.append(stft_spec)
 
     np_output = np.array(data)
     return torch.from_numpy(np_output).permute(0, 3, 1, 2).to(torch.float32)
 
 
-def calc_cqt_one_file(wave, sr= 22050) -> np.ndarray:
+def calc_cqt_one_wave(wave, sr= 22050) -> np.ndarray:
     """Calculating CQT spectrogram
 
     Args:
@@ -88,7 +88,7 @@ def calc_cqt(wave_list, dir= "") -> torch.Tensor :
     for i, wave in enumerate(tqdm(wave_list)):
         # full_path = dir + path
         # Calculate CQT spectrogram
-        cqt_spec = calc_cqt_one_file(wave)
+        cqt_spec = calc_cqt_one_wave(wave)
 
         height = cqt_spec.shape[0]
         if i == 0:
