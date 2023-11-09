@@ -19,7 +19,8 @@ def _preEmphasis(wave: np.ndarray, p=0.97) -> np.ndarray:
     """Pre-Emphasis"""
     return scipy.signal.lfilter([1.0, -p], 1, wave)
 
-def calc_stft_one_wave(wave) -> np.ndarray:
+
+def calc_stft_one_file(path: str) -> np.ndarray:
     """Calculate STFT with librosa.
 
     Args:
@@ -28,71 +29,78 @@ def calc_stft_one_wave(wave) -> np.ndarray:
     Returns:
         np.ndarray: A STFT spectrogram.
     """
-    # wave, sr = librosa.load(path)
+    wave, sr = librosa.load(path)
     wave = _preEmphasis(wave)
     steps = int(len(wave) * 0.0081)
     # calculate STFT
-    stft = librosa.stft(wave, n_fft= 22050,win_length= 1700, window="blackman")
+    stft = librosa.stft(wave, n_fft=sr, win_length=1700, hop_length=steps, window="blackman")
     amp_db = librosa.amplitude_to_db(np.abs(stft), ref=np.max)
     amp_db = amp_db[:800, :].astype("float32")
-
     return amp_db[..., np.newaxis]
 
-def calc_stft(waves_list) -> torch.Tensor :
+
+def calc_stft(protocol_df: pd.DataFrame, path: str) -> Tuple[np.ndarray, np.ndarray]:
     """
 
     This function extracts spectrograms from raw audio data by using FFT.
 
     Args:
-     paths_list(list): List contains path to wav files
+     protocol_df(pd.DataFrame): ASVspoof2019 protocol.
+     path(str): Path to ASVSpoof2019
 
     Returns:
-     data: spectrograms that have 4 dimentions like (n_paths_list, height, width, 1)
+     data: spectrograms that have 4 dimentions like (n_samples, height, width, 1)
+     label: 0 = Genuine, 1 = Spoof
     """
 
     data = []
-    for wave in tqdm(waves_list):
-
+    for audio in tqdm(protocol_df["utt_id"]):
+        file = path + audio + ".flac"
         # Calculate STFT
-        stft_spec = calc_stft_one_wave(wave)
+        stft_spec = calc_stft_one_file(file)
         data.append(stft_spec)
 
-    np_output = np.array(data)
-    return torch.from_numpy(np_output).permute(0, 3, 1, 2).to(torch.float32)
+    # Extract labels from protocol
+    labels = _extract_label(protocol_df)
+
+    return np.array(data), labels
 
 
-def calc_cqt_one_wave(wave, sr= 22050) -> np.ndarray:
+def calc_cqt_one_file(path: str) -> np.ndarray:
     """Calculating CQT spectrogram
 
     Args:
-        wave: a wave extract from wav file
+        path (str): Path to audio file.
 
     Returns:
         np.ndarray: A CQT spectrogram.
     """
-    # y, sr = librosa.load(path)
-    wave = _preEmphasis(wave)
-    cqt_spec = librosa.core.cqt(wave, sr= sr)
+    y, sr = librosa.load(path)
+    y = _preEmphasis(y)
+    cqt_spec = librosa.core.cqt(y, sr=sr)
     cq_db = librosa.amplitude_to_db(np.abs(cqt_spec))  # Amplitude to dB.
     return cq_db
 
 
-def calc_cqt(wave_list, dir= "") -> torch.Tensor :
-    """Calculate spectrograms from audio wave by using CQT.
+def calc_cqt(protocol_df: pd.DataFrame, path: str) -> Tuple[np.ndarray, np.ndarray]:
+    """Calculate spectrograms from raw audio data by using CQT.
 
     Please refer to `calc_stft` for arguments and returns
     They are almost same.
+
     """
+
+    samples = protocol_df["utt_id"]
     max_width = 200  # for resizing cqt spectrogram.
 
-    for i, wave in enumerate(tqdm(wave_list)):
-        # full_path = dir + path
+    for i, sample in enumerate(tqdm(samples)):
+        full_path = path + sample + ".flac"
         # Calculate CQT spectrogram
-        cqt_spec = calc_cqt_one_wave(wave)
+        cqt_spec = calc_cqt_one_file(full_path)
 
         height = cqt_spec.shape[0]
         if i == 0:
-            resized_data = np.zeros((len(wave_list), height, max_width))
+            resized_data = np.zeros((len(protocol_df), height, max_width))
 
         # Truncate
         if max_width <= cqt_spec.shape[1]:
@@ -105,11 +113,10 @@ def calc_cqt(wave_list, dir= "") -> torch.Tensor :
 
         resized_data[i] = np.float32(cqt_spec)
 
-    # # Extract labels from protocol
-    # labels = _extract_label(protocol_df)
+    # Extract labels from protocol
+    labels = _extract_label(protocol_df)
 
-    np_output = resized_data[..., np.newaxis]
-    return torch.from_numpy(np_output).permute(0, 3, 1, 2).to(torch.float32)
+    return resized_data[..., np.newaxis], labels
 
 
 def _extract_label(protocol: pd.DataFrame) -> np.ndarray:
@@ -130,23 +137,8 @@ def save_feature(feature: np.ndarray, path: str):
     """Save spectrograms as a binary file.
 
     Args:
-        feature (np.ndarray): Spectrograms with 4 dimensional shape like (n_paths_list, height, width, 1)
+        feature (np.ndarray): Spectrograms with 4 dimensional shape like (n_samples, height, width, 1)
         path (str): Path for saving.
     """
     with open(path, "wb") as web:
         pickle.dump(feature, web, protocol=4)
-        
-# TEST
-# filenames = ["src/fusion/file_example_WAV_2MG.wav", "src/fusion/file_example_WAV_1MG.wav"]
-# data = calc_stft(filenames)
-# # data = torch.from_numpy(data).permute(0, 3, 1, 2)
-
-# data_cqt = calc_cqt(filenames)
-# # data_cqt = torch.from_numpy(data_cqt).permute(0, 3, 1, 2)
-# # data_cqt = data_cqt.to(torch.float32)
-# print(data_cqt)
-
-# model = LCNN(input_dim= 1, num_label= 50)
-# # print(model(data).shape)
-
-# print(model(data_cqt).shape)

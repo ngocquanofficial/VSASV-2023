@@ -7,7 +7,7 @@ import torch
 from torch.utils.data import Dataset
 
 from src.fusion.LCNN.vad.vad import voice_active_detection, vad_one_file
-from src.fusion.feature import calc_stft, calc_cqt, calc_stft_one_wave, calc_cqt_one_wave
+from src.fusion.feature import calc_stft, calc_cqt, calc_cqt_one_file, calc_stft_one_file
 
 filenames = ["src/fusion/LCNN/vad/00000001.wav", "src/fusion/LCNN/vad/speech.wav"]
 file = "src/fusion/LCNN/vad/00000001.wav"
@@ -17,7 +17,7 @@ data = voice_active_detection(filenames)
 
 # print(calc_stft(data))
 
-print(calc_stft_one_wave(one).shape)
+print(calc_stft_one_file(one).shape)
 print(calc_cqt(data).shape)
 
 # use the embedding vector implemented from 2 model AASIST(antispoof-model) and ECAPA(verification-model)
@@ -41,12 +41,14 @@ class TrainingDataLCNN(Dataset) :
             print("ERROR Occur at Dataloader")
             label = None
             
-        after_vad = vad_one_file(audio_path)
+        # after_vad = vad_one_file(audio_path)
         
         if self.type == "stft" :
-            data = calc_stft_one_wave(after_vad).squeeze(2)
+            # data = calc_stft_one_wave(after_vad).squeeze(2)
+            data = calc_stft_one_file(audio_path)
         elif self.type == "cqt" :
-            data = calc_cqt_one_wave(after_vad).squeeze(2)
+            data = calc_cqt_one_file(audio_path)
+            # data = calc_cqt_one_wave(after_vad).squeeze(2)
             
         return data, label
             
