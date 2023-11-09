@@ -136,12 +136,13 @@ def vad_one_file(src_path, des_folder= "") :
     filename = src_path.split("/")[-1]
     # save 
     sf.write(filename , speech, samplerate)
-    return speech
+    return speech, samplerate
 
 def voice_active_detection(paths) :
     data = []
     for path in paths :
-        data.append(vad_one_file(path))
+        speech, sr = vad_one_file(path)
+        data.append(speech)
     
     return data
 
