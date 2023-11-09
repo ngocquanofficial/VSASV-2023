@@ -32,7 +32,7 @@ def calc_stft_one_wave(wave) -> np.ndarray:
     wave = _preEmphasis(wave)
     steps = int(len(wave) * 0.0081)
     # calculate STFT
-    stft = librosa.stft(wave, n_fft= 22050,win_length= 1700, hop_length=steps, window="blackman")
+    stft = librosa.stft(wave, n_fft= 22050,win_length= 1700, window="blackman")
     amp_db = librosa.amplitude_to_db(np.abs(stft), ref=np.max)
     amp_db = amp_db[:800, :].astype("float32")
 
