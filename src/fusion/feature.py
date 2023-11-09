@@ -19,7 +19,7 @@ def _preEmphasis(wave: np.ndarray, p=0.97) -> np.ndarray:
     """Pre-Emphasis"""
     return scipy.signal.lfilter([1.0, -p], 1, wave)
 
-def calc_stft_one_file(wave, sr) -> np.ndarray:
+def calc_stft_one_file(wave, sr) :
     """Calculate STFT with librosa.
 
     Args:

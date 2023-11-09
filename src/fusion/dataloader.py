@@ -42,6 +42,8 @@ class TrainingDataLCNN(Dataset) :
         
         if self.type == "stft" :
             data = calc_stft_one_file(after_vad, sr).permute(2, 0, 1)
+            # Ensure each shape is equal 
+            data = data[:, :, 124]
         elif self.type == "cqt" :
             data = calc_cqt_one_file(after_vad, sr).permute(2, 0, 1)
         return data, label
