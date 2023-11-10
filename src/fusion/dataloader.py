@@ -82,11 +82,33 @@ class ValidationDataLCNN(Dataset) :
             data = self.cqt_embedding[audio_path]
 
         label = torch.tensor(label, dtype= torch.int64, device= self.device)
-        print(data.shape, label)
+        # print(data.shape, label)
         return data.to(self.device), label
         
 
-        
-        
+class GenEmbDataLCNN(ValidationDataLCNN):
+    """
+    Modify ValidationDataLCNN to work with generate embedding script
+    """
 
-              
+    def __getitem__(self, idx) :
+        audio_path = self.path_list[idx]
+        audio_type = audio_path.split("/")[-2]
+        if audio_type == "bonafide" :
+            label = 1
+        elif audio_type == "spoofed_replay" or audio_type == "spoofed_voice_clone" :
+            label = 0
+        else :
+            print("ERROR Occur at Dataloader")
+            label = None
+            print(audio_type, "LABEL")
+        
+        if self.type == "stft" :
+            data = self.stft_embedding[audio_path]
+
+        elif self.type == "cqt" :
+            data = self.cqt_embedding[audio_path]
+
+        label = torch.tensor(label, dtype= torch.int64, device= self.device)
+        # print(data.shape, label)
+        return data.to(self.device), label, audio_path
