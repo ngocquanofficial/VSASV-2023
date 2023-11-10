@@ -50,7 +50,7 @@ def train(model, optimizer, criterion, data_loader, num_epochs, validation_loade
                 vwave, vlabel = vdata
                 voutput = model(vwave)
 
-                epoch_output.append(voutput.item())
+                epoch_output.append(voutput.argmax().item())
                 epoch_label.append(int(vlabel))
             current_eer = compute_eer(epoch_label, epoch_output, positive_label= 1)
             print("CURRENT EER IS: ", current_eer)

@@ -1,4 +1,3 @@
-%%writefile /kaggle/working/Vietnamese-Spoofing-Aware-Speaker-Verification/src/fusion/dataloader.py
 import os
 import sys 
 sys.path.append(os.getcwd()) # NOQA
