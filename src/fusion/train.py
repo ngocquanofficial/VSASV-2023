@@ -27,7 +27,7 @@ def train(model, optimizer, criterion, data_loader, num_epochs, validation_loade
             wave, label = data
             
             optimizer.zero_grad()
-            output = model(wave)
+            last_hidden, output = model(wave)
             loss = criterion(output, label)
             train_loss.append(loss.item())
             loss.backward()

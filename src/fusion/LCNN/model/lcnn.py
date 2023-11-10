@@ -43,9 +43,12 @@ class LCNN(nn.Module) :
             nn.MaxPool2d(kernel_size=(2, 2), stride=(2, 2))
         )
 
-        self.linear = nn.Sequential(
+        self.linear1 = nn.Sequential(
             self._make_maxout_dense(output_dim= 160),
             nn.BatchNorm1d(80),
+        )
+
+        self.linear2 = nn.Sequential(
             nn.Dropout(p= 0.75),
             nn.Linear(in_features= 80, out_features= self.num_label)
         )
@@ -54,8 +57,9 @@ class LCNN(nn.Module) :
         x = self.lcnn(input)
         
         x = x.flatten(1)
-        x = self.linear(x)
-        return x
+        last_hidden = self.linear1(x)
+        out = self.linear2(last_hidden)
+        return last_hidden, out
     
     def _make_maxout_conv(
         self, 
