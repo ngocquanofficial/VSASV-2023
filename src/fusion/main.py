@@ -15,6 +15,7 @@ from src.fusion.train import train
 def main(args):
 
     mode = args.mode
+    type_data = args.type
     if mode != "train" and mode != "test" :
         print("Type the mode equals train or test, run again")
         # Fast return
@@ -28,7 +29,7 @@ def main(args):
     stft_embedding = load_pickle(args.stft_embedding) 
     cqt_embedding = load_pickle(args.cqt_embedding)
     
-    training_data = TrainingDataLCNN(path_list= training_file, stft_embedding= stft_embedding, cqt_embedding= cqt_embedding)
+    training_data = TrainingDataLCNN(path_list= training_file, stft_embedding= stft_embedding, cqt_embedding= cqt_embedding, type= type_data)
     validation_data = TrainingDataLCNN(path_list= validation_file, stft_embedding= stft_embedding, cqt_embedding= cqt_embedding)
     validation_loader = DataLoader(dataset= validation_data, batch_size= 1, shuffle= False)
     train_loader = DataLoader(dataset= training_data, batch_size= 32, shuffle= True)
@@ -46,6 +47,13 @@ if __name__ == "__main__":
         dest="mode",
         type=str,
         help="string, only receive value train or test, depend on training or testing",
+        default="train",
+    )
+    parser.add_argument(
+        "--type",
+        dest="type",
+        type=str,
+        help="string, only receive value stft or cqt",
         default="train",
     )
 
