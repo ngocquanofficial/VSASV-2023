@@ -5,13 +5,14 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
 # Generate synthetic data
-num_samples = 500
-num_features = 200
-num_test_samples = 200
+num_samples = 50000
+num_features = 2000
+num_test_samples = 1000
 
 # Assuming you have a list of PyTorch tensors 'X_list' and a tensor 'y' representing the target labels
 X_list = [torch.rand(num_features) for _ in range(num_samples)]
 y_tensor = torch.randint(0, 2, (num_samples,))
+print(y_tensor)
 
 # Convert PyTorch tensors to NumPy arrays
 X_numpy = np.array([x.numpy() for x in X_list])

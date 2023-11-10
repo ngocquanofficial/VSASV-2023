@@ -74,7 +74,6 @@ class TrainingAASIST(Dataset) :
         target_aasist_emb = torch.from_numpy(self.aasist_emb[target]).squeeze().to(self.device)
         second_aasist_emb = torch.from_numpy(self.aasist_emb[second]).squeeze().to(self.device)
         label_type = torch.tensor(label_type, dtype=torch.float, device= self.device)
-                    
-                    
+                           
         return target_aasist_emb, second_aasist_emb, label_type
     
