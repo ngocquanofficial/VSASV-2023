@@ -1,3 +1,4 @@
+%%writefile /kaggle/working/Vietnamese-Spoofing-Aware-Speaker-Verification/src/fusion/dataloader.py
 import os
 import sys 
 sys.path.append(os.getcwd()) # NOQA
@@ -43,10 +44,10 @@ class TrainingDataLCNN(Dataset) :
             print(audio_type, "LABEL")
         
         if self.type == "stft" :
-            data = self.stft_embedding(audio_path)
+            data = self.stft_embedding[audio_path]
 
         elif self.type == "cqt" :
-            data = self.cqt_embedding(audio_path)
+            data = self.cqt_embedding[audio_path]
 
         label = torch.tensor(label, dtype= torch.int64, device= self.device)
         return data.to(self.device), label
@@ -76,19 +77,16 @@ class ValidationDataLCNN(Dataset) :
             print(audio_type, "LABEL")
         
         if self.type == "stft" :
-            data = self.stft_embedding(audio_path)
+            data = self.stft_embedding[audio_path]
 
         elif self.type == "cqt" :
-            data = self.cqt_embedding(audio_path)
+            data = self.cqt_embedding[audio_path]
 
         label = torch.tensor(label, dtype= torch.int64, device= self.device)
+        print(data.shape, label)
         return data.to(self.device), label
         
 
-dataload = TrainingDataLCNN(filenames)
-data, label = dataload[0]
-print(label)
-        
         
         
 
