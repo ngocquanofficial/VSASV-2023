@@ -48,7 +48,7 @@ def train(model, optimizer, criterion, data_loader, num_epochs, validation_loade
         with torch.no_grad():
             for i, vdata in enumerate(validation_loader):
                 vwave, vlabel = vdata
-                voutput = model(vwave)
+                emb, voutput = model(vwave)
 
                 epoch_output.append(voutput.argmax().item())
                 epoch_label.append(int(vlabel))
