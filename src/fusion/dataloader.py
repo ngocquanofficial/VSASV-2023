@@ -92,7 +92,7 @@ class GenEmbDataLCNN(ValidationDataLCNN):
     """
 
     def __getitem__(self, idx) :
-        audio_path = self.path_list(idx)
+        audio_path = self.path_list[idx]
         audio_type = audio_path.split("/")[-2]
         if audio_type == "bonafide" :
             label = 1
