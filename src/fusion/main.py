@@ -28,9 +28,11 @@ def main(args):
     validation_file = load_pickle(args.validation_file)
     stft_embedding = load_pickle(args.stft_embedding) 
     cqt_embedding = load_pickle(args.cqt_embedding)
+    stft_embedding_val = load_pickle(args.stft_embedding_val) 
+    cqt_embedding_val = load_pickle(args.cqt_embedding_val)
     
     training_data = TrainingDataLCNN(path_list= training_file, stft_embedding= stft_embedding, cqt_embedding= cqt_embedding, type= type_data)
-    validation_data = TrainingDataLCNN(path_list= validation_file, stft_embedding= stft_embedding, cqt_embedding= cqt_embedding)
+    validation_data = TrainingDataLCNN(path_list= validation_file, stft_embedding=stft_embedding_val, cqt_embedding=cqt_embedding_val)
     validation_loader = DataLoader(dataset= validation_data, batch_size= 1, shuffle= False)
     train_loader = DataLoader(dataset= training_data, batch_size= 32, shuffle= True)
     criterion = torch.nn.CrossEntropyLoss()
@@ -74,6 +76,20 @@ if __name__ == "__main__":
     parser.add_argument(
         "--cqt_embedding",
         dest="cqt_embedding",
+        type=str,
+        help="",
+        default="Dien di dung luoi :) ",
+    )
+    parser.add_argument(
+        "--stft_embedding_val",
+        dest="stft_embedding_val",
+        type=str,
+        help="",
+        default="Dien di dung luoi :) ",
+    )
+    parser.add_argument(
+        "--cqt_embedding_val",
+        dest="cqt_embedding_val",
         type=str,
         help="",
         default="Dien di dung luoi :) ",
