@@ -2,7 +2,7 @@ import torch
 import numpy as np
 from src.naive_dnn.utils import compute_eer,load_embeddings,load_pickle
 import random
-def sample_data(ecapa_file, s2pecnet_file, lcnn_stft_file, lcnn_cqt_file, speaker_data, num= 10000) :
+def sample_data_from_scratch(ecapa_file, s2pecnet_file, lcnn_stft_file, lcnn_cqt_file, speaker_data, num= 10000) :
     X_data = []
     y_label = []
     ecapa_emb = load_pickle(ecapa_file)
@@ -49,9 +49,7 @@ def sample_data(ecapa_file, s2pecnet_file, lcnn_stft_file, lcnn_cqt_file, speake
                 voice_spoofing_list = speaker_data[speaker]["spoofed_voice_clone"] + speaker_data[speaker]["spoofed_replay"]
                 
                 target = random.choice(speaker_data[speaker]["bonafide"])
-                second = random.choice(voice_spoofing_list)
-                
-        # Return value       
-                    
-                    
-        return 
+                second = random.choice(voice_spoofing_list)           
+           
+        data = torch.cat(ecapa_emb[target], ecapa_emb[second], s2pecnet_emb[second], lcnn_stft_emb[second], lcnn_cqt_emb[second])
+        X_data.append(data.numpy())

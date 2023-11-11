@@ -49,9 +49,9 @@ def main(args):
             for v, audio_path in zip(output, audio_paths):
                 output_dict[audio_path] = v
     
-    with open("/kaggle/working/embeddings.pkl", "wb") as f:
+    with open(f"/kaggle/working/embeddings_{type_data}_{mode}.pkl", "wb") as f:
         pk.dump(last_hidden_dict, f)
-    with open("/kaggle/working/scores.pkl", "wb") as f:
+    with open(f"/kaggle/working/scores_{type_data}_{mode}.pkl", "wb") as f:
         pk.dump(output_dict, f)
 
 if __name__ == "__main__":
