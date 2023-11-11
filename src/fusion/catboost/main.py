@@ -22,8 +22,6 @@ def main(args):
     X_test, y_test = sample_data(ecapa, s2pecnet, lcnn_stft, lcnn_cqt, validation_dataset)
 
     train(X_train, y_train, X_test, y_test)
-    
-    
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Speaker Detection from Lab914")
@@ -41,20 +39,7 @@ if __name__ == "__main__":
         help="",
         default="path",
     )
-    parser.add_argument(
-        "--mode",
-        dest="mode",
-        type=str,
-        help="string, only receive value train or test, depend on training or testing",
-        default="train",
-    )
-    parser.add_argument(
-        "--type",
-        dest="type",
-        type=str,
-        help="string, only receive value stft or cqt",
-        default="stft",
-    )
+
     parser.add_argument(
         "--ecapa_embedding",
         dest="ecapa_embedding",
