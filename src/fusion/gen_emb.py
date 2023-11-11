@@ -45,9 +45,11 @@ def main(args):
             last_hidden = last_hidden.detach().cpu().numpy()
             output = output.detach().cpu().numpy()
             for v, audio_path in zip(last_hidden, audio_paths):
-                last_hidden_dict[audio_path] = v
+                relative_path = "/".join(audio_path.split("/")[3:])
+                last_hidden_dict[relative_path] = v
             for v, audio_path in zip(output, audio_paths):
-                output_dict[audio_path] = v
+                relative_path = "/".join(audio_path.split("/")[3:])
+                output_dict[relative_path] = v
     
     with open(f"/kaggle/working/embeddings_{type_data}_{mode}.pkl", "wb") as f:
         pk.dump(last_hidden_dict, f)
