@@ -2,6 +2,7 @@ import torch
 import numpy as np
 from src.naive_dnn.utils import compute_eer,load_embeddings,load_pickle
 import random
+import os
 def sample_data_from_scratch(ecapa_file, s2pecnet_file, lcnn_stft_file, lcnn_cqt_file, speaker_data, num= 10000) :
     X_data = []
     y_label = []
@@ -53,3 +54,25 @@ def sample_data_from_scratch(ecapa_file, s2pecnet_file, lcnn_stft_file, lcnn_cqt
            
         data = torch.cat(ecapa_emb[target], ecapa_emb[second], s2pecnet_emb[second], lcnn_stft_emb[second], lcnn_cqt_emb[second])
         X_data.append(data.numpy())
+        y_label.append(label_type)
+        
+    return np.array(X_data), np.array(y_label)
+
+def sample_data(ecapa_emb, s2pecnet_emb, lcnn_stft_emb, lcnn_cqt_emb, dataset) :
+    X_data = []
+    y_label = []
+
+    for data in dataset :
+        target, second, label = data
+        
+        emb_concat = torch.cat(ecapa_emb[target], ecapa_emb[second], s2pecnet_emb[second], lcnn_stft_emb[second], lcnn_cqt_emb[second])
+        emb_concat = emb_concat.numpy()
+        
+        X_data.append(emb_concat)
+        y_label.append(label)
+    
+    return np.array(X_data), np.array(y_label)
+            
+            
+
+

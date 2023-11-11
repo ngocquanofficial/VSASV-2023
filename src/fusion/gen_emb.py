@@ -25,7 +25,7 @@ def main(args):
     
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = LCNN(input_dim= 1, num_label= 2).to(device)
-    model.load_state_dict(torch.load(args.ckpt))
+    model = torch.load(args.ckpt)
     model.eval()
     
     dictionary_file = load_pickle(args.dictionary_file)
@@ -55,8 +55,15 @@ def main(args):
         pk.dump(output_dict, f)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Speaker Detection from Lab914")
-
+    parser = argparse.ArgumentParser(description="Unknown Team from Lab914")
+    
+    parser.add_argument(
+        "--mode",
+        dest="mode",
+        type=str,
+        help="",
+        default="Dien di dung luoi :) ",
+    )
     parser.add_argument(
         "--type",
         dest="type",
@@ -93,4 +100,5 @@ if __name__ == "__main__":
         help="",
         default="Dien di dung luoi :) ",
     )
+
     main(parser.parse_args())
