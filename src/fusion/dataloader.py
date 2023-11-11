@@ -86,10 +86,20 @@ class ValidationDataLCNN(Dataset) :
         return data.to(self.device), label
         
 
-class GenEmbDataLCNN(ValidationDataLCNN):
+class GenEmbDataLCNN:
     """
     Modify ValidationDataLCNN to work with generate embedding script
     """
+    def __init__(self, path_list,stft_embedding, cqt_embedding, type= "stft") :
+        self.type = type
+        self.path_list = list(set(path_list)) # note: path_list can contain duplicate values
+        self.stft_embedding = stft_embedding
+        self.cqt_embedding = cqt_embedding
+        
+        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+    def __len__(self) :
+        return len(self.stft_embedding)
 
     def __getitem__(self, idx) :
         audio_path = self.path_list[idx]
