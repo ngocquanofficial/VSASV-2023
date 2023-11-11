@@ -5,13 +5,13 @@ import random
 import os
 
 
-def sample_data(ecapa_emb, s2pecnet_emb, lcnn_stft_emb, lcnn_cqt_emb, dataset) :
+def sample_data(ecapa_emb, s2pecnet_emb, lcnn_stft_emb, lcnn_cqt_emb, aasist_emb, dataset) :
     X_data = []
     y_label = []
 
     for data in dataset :
         target, second, label = data
-        emb_concat = np.concatenate((ecapa_emb[target], ecapa_emb[second], s2pecnet_emb[second], lcnn_stft_emb[second], lcnn_cqt_emb[second]), axis= 0)
+        emb_concat = np.concatenate((ecapa_emb[target], ecapa_emb[second], aasist_emb[second], s2pecnet_emb[second], lcnn_stft_emb[second], lcnn_cqt_emb[second]), axis= 0)
    
         X_data.append(emb_concat)
         y_label.append(label)
@@ -20,7 +20,7 @@ def sample_data(ecapa_emb, s2pecnet_emb, lcnn_stft_emb, lcnn_cqt_emb, dataset) :
             
 
 
-def sample_data_from_scratch(ecapa_file, s2pecnet_file, lcnn_stft_file, lcnn_cqt_file, speaker_data, num= 10000) :
+def sample_data_from_scratch(ecapa_file, s2pecnet_file, aasist_file, lcnn_stft_file, lcnn_cqt_file, speaker_data, num= 10000) :
     X_data = []
     y_label = []
     ecapa_emb = load_pickle(ecapa_file)
@@ -28,6 +28,7 @@ def sample_data_from_scratch(ecapa_file, s2pecnet_file, lcnn_stft_file, lcnn_cqt
     lcnn_stft_emb = load_pickle(lcnn_stft_file)
     lcnn_cqt_emb = load_pickle(lcnn_cqt_file)
     speaker_data = load_pickle(speaker_data)
+    aasist_data = load_pickle(aasist_file)
 
     for idx in range(num) :
 

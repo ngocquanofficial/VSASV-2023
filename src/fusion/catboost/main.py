@@ -13,13 +13,14 @@ from src.fusion.catboost.train import train
 def main(args):
     ecapa = load_pickle(args.ecapa_embedding)
     s2pecnet = load_pickle(args.s2pecnet_embedding)
+    aasist = load_pickle(args.aasist_embedding)
     lcnn_stft = load_pickle(args.lcnn_stft)
     lcnn_cqt = load_pickle(args.lcnn_cqt)
     train_dataset = load_pickle(args.train_dataset)
     validation_dataset = load_pickle(args.validation_dataset)
     
-    X_train, y_train = sample_data(ecapa, s2pecnet, lcnn_stft, lcnn_cqt, train_dataset)
-    X_test, y_test = sample_data(ecapa, s2pecnet, lcnn_stft, lcnn_cqt, validation_dataset)
+    X_train, y_train = sample_data(ecapa, s2pecnet, lcnn_stft, lcnn_cqt, aasist, train_dataset)
+    X_test, y_test = sample_data(ecapa, s2pecnet, lcnn_stft, lcnn_cqt, aasist, validation_dataset)
 
     train(X_train, y_train, X_test, y_test)
 
@@ -45,6 +46,13 @@ if __name__ == "__main__":
         dest="ecapa_embedding",
         type=str,
         help="path to ecapa embedding",
+        default="path",
+    )
+    parser.add_argument(
+        "--aasist_embedding",
+        dest="aasist_embedding",
+        type=str,
+        help="path to aasist embedding",
         default="path",
     )
     parser.add_argument(
