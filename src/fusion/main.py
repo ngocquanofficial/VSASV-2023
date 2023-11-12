@@ -28,10 +28,13 @@ def main(args):
     validation_file = load_pickle(args.validation_file)
     stft_embedding = load_pickle(args.stft_embedding) 
     cqt_embedding = load_pickle(args.cqt_embedding)
+    mel_embedding = load_pickle(args.mel_embedding)
+    
     stft_embedding_val = load_pickle(args.stft_embedding_val) 
     cqt_embedding_val = load_pickle(args.cqt_embedding_val)
+    mel_embedding_val = load_pickle(args.mel_embedding_val)
     
-    training_data = TrainingDataLCNN(path_list= training_file, stft_embedding= stft_embedding, cqt_embedding= cqt_embedding, type= type_data)
+    training_data = TrainingDataLCNN(path_list= training_file, stft_embedding= stft_embedding, cqt_embedding= cqt_embedding, mel_embedding= mel_embedding, type= type_data)
     validation_data = TrainingDataLCNN(path_list= validation_file, stft_embedding=stft_embedding_val, cqt_embedding=cqt_embedding_val)
     validation_loader = DataLoader(dataset= validation_data, batch_size= 1, shuffle= False)
     train_loader = DataLoader(dataset= training_data, batch_size= 32, shuffle= True)
@@ -55,7 +58,7 @@ if __name__ == "__main__":
         "--type",
         dest="type",
         type=str,
-        help="string, only receive value stft or cqt",
+        help="string, only receive value stft, cqt or mel",
         default="train",
     )
 

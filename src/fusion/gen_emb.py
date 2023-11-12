@@ -31,8 +31,10 @@ def main(args):
     dictionary_file = load_pickle(args.dictionary_file)
     stft_embedding = load_pickle(args.stft_embedding) 
     cqt_embedding = load_pickle(args.cqt_embedding)
+    mel_embedding = load_pickle(args.mel_embedding)
     
-    dataset = GenEmbDataLCNN(path_list= dictionary_file, stft_embedding= stft_embedding, cqt_embedding= cqt_embedding, type= type_data)
+    
+    dataset = GenEmbDataLCNN(path_list= dictionary_file, stft_embedding= stft_embedding, cqt_embedding= cqt_embedding, mel_embedding= mel_embedding, type= type_data)
     data_loader = DataLoader(dataset= dataset, batch_size= 32, shuffle= True)
     
     last_hidden_dict = {}
@@ -90,6 +92,13 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--cqt_embedding",
+        dest="cqt_embedding",
+        type=str,
+        help="",
+        default="Dien di dung luoi :) ",
+    )
+    parser.add_argument(
+        "--mel_embedding",
         dest="cqt_embedding",
         type=str,
         help="",

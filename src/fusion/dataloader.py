@@ -14,16 +14,14 @@ file = "src/fusion/LCNN/vad/00000001.wav"
 speech, sr = vad_one_file(file)
 data = voice_active_detection(filenames)
 
-print(calc_stft_one_file(speech, sr).shape)
-print("DONE")
-
 # use the embedding vector implemented from 2 model AASIST(antispoof-model) and ECAPA(verification-model)
 class TrainingDataLCNN(Dataset) :
-    def __init__(self, path_list,stft_embedding, cqt_embedding, type= "stft") :
+    def __init__(self, path_list,stft_embedding, cqt_embedding, mel_embedding, type= "stft") :
         self.type = type
         self.path_list = path_list
         self.stft_embedding = stft_embedding
         self.cqt_embedding = cqt_embedding
+        self.mel_embedding = mel_embedding
         
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -47,16 +45,19 @@ class TrainingDataLCNN(Dataset) :
 
         elif self.type == "cqt" :
             data = self.cqt_embedding[audio_path]
+        elif self.type == "mel" :
+            data = self.mel_embedding[audio_path]
 
         label = torch.tensor(label, dtype= torch.int64, device= self.device)
         return data.to(self.device), label
             
 class ValidationDataLCNN(Dataset) :
-    def __init__(self, path_list,stft_embedding, cqt_embedding, type= "stft") :
+    def __init__(self, path_list,stft_embedding, cqt_embedding, mel_embedding, type= "stft") :
         self.type = type
         self.path_list = path_list
         self.stft_embedding = stft_embedding
         self.cqt_embedding = cqt_embedding
+        self.mel_embedding = mel_embedding
         
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -77,9 +78,10 @@ class ValidationDataLCNN(Dataset) :
         
         if self.type == "stft" :
             data = self.stft_embedding[audio_path]
-
         elif self.type == "cqt" :
             data = self.cqt_embedding[audio_path]
+        elif self.type == "mel" :
+            data = self.mel_embedding[audio_path]
 
         label = torch.tensor(label, dtype= torch.int64, device= self.device)
         # print(data.shape, label)
@@ -90,11 +92,12 @@ class GenEmbDataLCNN:
     """
     Modify ValidationDataLCNN to work with generate embedding script
     """
-    def __init__(self, path_list,stft_embedding, cqt_embedding, type= "stft") :
+    def __init__(self, path_list,stft_embedding, cqt_embedding, mel_embedding, type= "stft") :
         self.type = type
         self.path_list = list(set(path_list)) # note: path_list can contain duplicate values
         self.stft_embedding = stft_embedding
         self.cqt_embedding = cqt_embedding
+        self.mel_embedding = mel_embedding
         
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -118,6 +121,9 @@ class GenEmbDataLCNN:
 
         elif self.type == "cqt" :
             data = self.cqt_embedding[audio_path]
+        
+        elif self.type == "mel" :
+            data = self.mel_embedding[audio_path]
 
         label = torch.tensor(label, dtype= torch.int64, device= self.device)
         # print(data.shape, label)
