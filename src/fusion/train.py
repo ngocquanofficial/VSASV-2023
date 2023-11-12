@@ -43,6 +43,7 @@ def train(model, optimizer, criterion, data_loader, num_epochs, validation_loade
         model.eval()
         epoch_output = []
         epoch_label = []
+        max_eer = 1
 
             # Disable gradient computation and reduce memory consumption.
         with torch.no_grad():
@@ -55,8 +56,9 @@ def train(model, optimizer, criterion, data_loader, num_epochs, validation_loade
             current_eer = compute_eer(epoch_label, epoch_output, positive_label= 1)
             print(f"CURRENT EER IS: {current_eer} at epoch {epoch}")
             eer.append(current_eer)
-                
-        model_path = 'model_{}_epoch{}'.format(model_type, epoch)
-        torch.save(model, f'/kaggle/working/{model_path}.pth')
+        if current_eer < max_eer :  
+            max_eer = current_eer 
+            model_path = 'model_{}_epoch{}'.format(model_type, epoch)
+            torch.save(model, f'/kaggle/working/{model_path}.pth')
 
     save_pickle(eer, filename= "eer.pk")
