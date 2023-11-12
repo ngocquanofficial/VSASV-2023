@@ -12,7 +12,7 @@ from src.naive_dnn.utils import compute_eer, save_pickle
 
 timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
 
-def train(model, optimizer, criterion, data_loader, num_epochs, validation_loader):
+def train(model, optimizer, criterion, data_loader, num_epochs, validation_loader, model_type= "stft"):
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = model.to(device)
     criterion = criterion.to(device)
@@ -53,10 +53,10 @@ def train(model, optimizer, criterion, data_loader, num_epochs, validation_loade
                 epoch_output.append(voutput.argmax().item())
                 epoch_label.append(int(vlabel))
             current_eer = compute_eer(epoch_label, epoch_output, positive_label= 1)
-            print("CURRENT EER IS: ", current_eer)
+            print(f"CURRENT EER IS: {current_eer} at epoch {epoch}")
             eer.append(current_eer)
                 
-        model_path = 'model_{}_epoch{}_eer= {}'.format(timestamp, epoch, current_eer)
+        model_path = 'model_{}_epoch{}'.format(model_type, epoch)
         torch.save(model, f'/kaggle/working/{model_path}.pth')
 
     save_pickle(eer, filename= "eer.pk")

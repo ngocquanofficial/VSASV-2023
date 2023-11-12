@@ -109,8 +109,3 @@ def calc_mel_one_file(wave, sr):
     torch_output = torch.from_numpy(mel_db).to(torch.float32)
 
     return torch_output
-
-wave, sr = librosa.load("00000000.wav")
-print(calc_mel_one_file(wave, sr).shape)
-print(calc_stft_one_file(wave, sr).shape)
-print(calc_cqt_one_file(wave, sr).shape)

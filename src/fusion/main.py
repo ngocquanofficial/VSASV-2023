@@ -35,14 +35,14 @@ def main(args):
     mel_embedding_val = load_pickle(args.mel_embedding_val)
     
     training_data = TrainingDataLCNN(path_list= training_file, stft_embedding= stft_embedding, cqt_embedding= cqt_embedding, mel_embedding= mel_embedding, type= type_data)
-    validation_data = TrainingDataLCNN(path_list= validation_file, stft_embedding=stft_embedding_val, cqt_embedding=cqt_embedding_val)
+    validation_data = TrainingDataLCNN(path_list= validation_file, stft_embedding=stft_embedding_val, cqt_embedding=cqt_embedding_val, mel_embedding= mel_embedding_val, type= type_data)
     validation_loader = DataLoader(dataset= validation_data, batch_size= 1, shuffle= False)
     train_loader = DataLoader(dataset= training_data, batch_size= 32, shuffle= True)
     criterion = torch.nn.CrossEntropyLoss()
     optimizer = optim.AdamW(model.parameters(), lr= 1e-5)
     
     if mode == "train" :
-        train(model= model, optimizer= optimizer, criterion= criterion, data_loader= train_loader, num_epochs= 50, validation_loader= validation_loader)
+        train(model= model, optimizer= optimizer, criterion= criterion, data_loader= train_loader, num_epochs= 50, validation_loader= validation_loader, model_type= type_data)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Speaker Detection from Lab914")
@@ -84,6 +84,13 @@ if __name__ == "__main__":
         default="Dien di dung luoi :) ",
     )
     parser.add_argument(
+        "--mel_embedding",
+        dest="mel_embedding",
+        type=str,
+        help="",
+        default="Dien di dung luoi :) ",
+    )
+    parser.add_argument(
         "--stft_embedding_val",
         dest="stft_embedding_val",
         type=str,
@@ -93,6 +100,13 @@ if __name__ == "__main__":
     parser.add_argument(
         "--cqt_embedding_val",
         dest="cqt_embedding_val",
+        type=str,
+        help="",
+        default="Dien di dung luoi :) ",
+    )
+    parser.add_argument(
+        "--mel_embedding_val",
+        dest="mel_embedding_val",
         type=str,
         help="",
         default="Dien di dung luoi :) ",
