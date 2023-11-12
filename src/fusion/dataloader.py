@@ -86,7 +86,6 @@ class ValidationDataLCNN(Dataset) :
         label = torch.tensor(label, dtype= torch.int64, device= self.device)
         # print(data.shape, label)
         return data.to(self.device), label
-        
 
 class GenEmbDataLCNN:
     """

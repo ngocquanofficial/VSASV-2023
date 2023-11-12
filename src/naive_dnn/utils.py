@@ -56,3 +56,4 @@ def compute_eer(label, pred, positive_label=1):
 # label = [1,1,1,1,0,0,0,0]
 # pred = [5, 5, 5, 0, 5, 0, 0, 0]
 # print(compute_eer(label, pred))
+
