@@ -74,4 +74,4 @@ def train(model, optimizer, criterion, data_loader, num_epochs, validation_loade
             torch.save(model, f'/kaggle/working/{model_path}.pth')
             print(f"Save model at epoch {epoch}")
 
-    save_pickle(eer, filename="eer.pk")
+    save_pickle(eer, filename= f"{model_type}_eer.pk")

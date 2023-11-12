@@ -54,7 +54,6 @@ class LCNN(nn.Module) :
         )
         
     def forward(self, input) :
-        print(input.shape)
         x = self.lcnn(input)
         
         x = x.flatten(1)
