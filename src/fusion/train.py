@@ -38,14 +38,16 @@ def train(model, optimizer, criterion, data_loader, num_epochs, validation_loade
         
         print(f"Epoch {epoch}: Loss average= {sum(train_loss) / len(train_loss)}")
         
-        # Eval to check the eer score
+        # Eval to check the eer score and loss
         print("EVAL:")
         model.eval()
         epoch_output = []
         epoch_label = []
+        eval_loss = 0.0
+        num_sample = 0
         max_eer = 1
 
-            # Disable gradient computation and reduce memory consumption.
+        # Disable gradient computation and reduce memory consumption.
         with torch.no_grad():
             for i, vdata in enumerate(validation_loader):
                 vwave, vlabel = vdata
@@ -53,12 +55,23 @@ def train(model, optimizer, criterion, data_loader, num_epochs, validation_loade
 
                 epoch_output.append(voutput.argmax().item())
                 epoch_label.append(int(vlabel))
-            current_eer = compute_eer(epoch_label, epoch_output, positive_label= 1)
+
+                # Calculate loss on the evaluation set
+                eval_loss += criterion(voutput, vlabel).item()
+                num_sample += 1
+
+            current_eer = compute_eer(epoch_label, epoch_output, positive_label=1)
             print(f"CURRENT EER IS: {current_eer} at epoch {epoch}")
             eer.append(current_eer)
-        if current_eer < max_eer :  
-            max_eer = current_eer 
+
+            # Calculate average loss on the evaluation set
+            avg_eval_loss = eval_loss / num_sample
+            print(f"AVERAGE EVAL LOSS: {avg_eval_loss} at epoch {epoch}")
+
+        if current_eer < max_eer:
+            max_eer = current_eer
             model_path = 'model_{}_epoch{}'.format(model_type, epoch)
             torch.save(model, f'/kaggle/working/{model_path}.pth')
+            print(f"Save model at epoch {epoch}")
 
-    save_pickle(eer, filename= "eer.pk")
+    save_pickle(eer, filename="eer.pk")
