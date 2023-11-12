@@ -19,6 +19,7 @@ def train(model, optimizer, criterion, data_loader, num_epochs, validation_loade
     train_loss=[]
     eer = []    
     print("Start training process")
+    min_loss = 100
     for epoch in range(num_epochs):
         model.train().to(device)
         running_loss = []
@@ -45,7 +46,7 @@ def train(model, optimizer, criterion, data_loader, num_epochs, validation_loade
         epoch_label = []
         eval_loss = 0.0
         num_sample = 0
-        min_loss = 100
+        avg_eval_loss = 0
 
         # Disable gradient computation and reduce memory consumption.
         with torch.no_grad():

@@ -91,7 +91,6 @@ class LCNN(nn.Module) :
 # x = torch.rand((100, 3, 160, 100))
 # model = LCNN(input_dim= 3, num_label= 2)
 # print(model(x).shape)
-
 # from torchsummary import summary
 
 # summary(model, ( 3, 160, 100))
