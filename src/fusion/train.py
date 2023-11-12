@@ -45,7 +45,7 @@ def train(model, optimizer, criterion, data_loader, num_epochs, validation_loade
         epoch_label = []
         eval_loss = 0.0
         num_sample = 0
-        max_eer = 1
+        min_loss = 100
 
         # Disable gradient computation and reduce memory consumption.
         with torch.no_grad():
@@ -68,8 +68,8 @@ def train(model, optimizer, criterion, data_loader, num_epochs, validation_loade
             avg_eval_loss = eval_loss / num_sample
             print(f"AVERAGE EVAL LOSS: {avg_eval_loss} at epoch {epoch}")
 
-        if current_eer < max_eer:
-            max_eer = current_eer
+        if avg_eval_loss < min_loss :
+            min_loss = avg_eval_loss
             model_path = 'model_{}_epoch{}'.format(model_type, epoch)
             torch.save(model, f'/kaggle/working/{model_path}.pth')
             print(f"Save model at epoch {epoch}")

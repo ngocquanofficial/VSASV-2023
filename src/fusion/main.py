@@ -16,6 +16,10 @@ def main(args):
 
     mode = args.mode
     type_data = args.type
+    lr = args.lr
+    batch_size = args.batch_size
+    epoch = args.epoch
+    
     if mode != "train" and mode != "test" :
         print("Type the mode equals train or test, run again")
         # Fast return
@@ -37,16 +41,37 @@ def main(args):
     training_data = TrainingDataLCNN(path_list= training_file, stft_embedding= stft_embedding, cqt_embedding= cqt_embedding, mel_embedding= mel_embedding, type= type_data)
     validation_data = TrainingDataLCNN(path_list= validation_file, stft_embedding=stft_embedding_val, cqt_embedding=cqt_embedding_val, mel_embedding= mel_embedding_val, type= type_data)
     validation_loader = DataLoader(dataset= validation_data, batch_size= 1, shuffle= False)
-    train_loader = DataLoader(dataset= training_data, batch_size= 32, shuffle= True)
+    train_loader = DataLoader(dataset= training_data, batch_size= batch_size, shuffle= True)
     criterion = torch.nn.CrossEntropyLoss()
-    optimizer = optim.AdamW(model.parameters(), lr= 1e-5)
+    optimizer = optim.AdamW(model.parameters(), lr= lr)
     
     if mode == "train" :
-        train(model= model, optimizer= optimizer, criterion= criterion, data_loader= train_loader, num_epochs= 50, validation_loader= validation_loader, model_type= type_data)
+        train(model= model, optimizer= optimizer, criterion= criterion, data_loader= train_loader, num_epochs= epoch, validation_loader= validation_loader, model_type= type_data)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Speaker Detection from Lab914")
+    parser.add_argument(
+        "--lr",
+        dest="lr",
+        type=float,  # Use float type for learning rate
+        help="Learning rate for training (float)",
+        default= 1e-5,  # Set a default value
+    )
+    parser.add_argument(
+        "--batch_size",
+        dest="batch_size",
+        type=int,  # Use int type for batch size
+        help="Batch size for training (int)",
+        default=32,  # Set a default value
+    )
 
+    parser.add_argument(
+        "--epoch",
+        dest="epoch",
+        type=int,  # Use int type for the number of epochs
+        help="Number of training epochs (int)",
+        default= 90,  # Set a default value
+    )
     parser.add_argument(
         "--mode",
         dest="mode",
