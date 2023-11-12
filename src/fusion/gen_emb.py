@@ -99,7 +99,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--mel_embedding",
-        dest="cqt_embedding",
+        dest="mel_embedding",
         type=str,
         help="",
         default="Dien di dung luoi :) ",
