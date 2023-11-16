@@ -11,6 +11,7 @@ from src.naive_dnn.utils import compute_eer,load_embeddings,load_pickle
 from src.fusion.catboost.dataloader import sample_data
 from src.fusion.catboost.train import train
 def main(args):
+    epoch = args.epoch
     ecapa = load_pickle(args.ecapa_embedding)
     s2pecnet = load_pickle(args.s2pecnet_embedding)
     aasist = load_pickle(args.aasist_embedding)
@@ -22,10 +23,17 @@ def main(args):
     X_train, y_train = sample_data(ecapa, s2pecnet, lcnn_stft, lcnn_cqt, aasist, train_dataset)
     X_test, y_test = sample_data(ecapa, s2pecnet, lcnn_stft, lcnn_cqt, aasist, validation_dataset)
 
-    train(X_train, y_train, X_test, y_test)
+    train(X_train, y_train, X_test, y_test, epoch= epoch)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Speaker Detection from Lab914")
+    parser.add_argument(
+        "--epoch",
+        dest="epoch",
+        type=str,
+        help="",
+        default="path",
+    )
     parser.add_argument(
         "--train_dataset",
         dest="train_dataset",

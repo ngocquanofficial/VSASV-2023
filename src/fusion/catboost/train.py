@@ -12,11 +12,11 @@ from src.naive_dnn.utils import compute_eer
 from sklearn.metrics import accuracy_score
 
 # Generate synthetic data
-def train(X_train, y_train, X_test, y_test):
+def train(X_train, y_train, X_test, y_test, epoch= 700):
     print("START TRAINING")
 
     # Initialize the CatBoost classifier
-    model = CatBoostClassifier(iterations=700, depth=7, learning_rate=0.04, loss_function='Logloss', verbose=True)
+    model = CatBoostClassifier(iterations= epoch, depth=7, learning_rate=0.04, loss_function='Logloss', verbose=True)
 
     # Specify the validation dataset
     eval_dataset = (X_test, y_test)
