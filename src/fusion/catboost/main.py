@@ -30,7 +30,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--epoch",
         dest="epoch",
-        type=str,
+        type= int,
         help="",
         default="path",
     )

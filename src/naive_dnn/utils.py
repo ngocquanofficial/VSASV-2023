@@ -51,9 +51,9 @@ def compute_eer(label, pred, positive_label=1):
 
     # return the mean of eer from fpr and from fnr
     eer = (eer_1 + eer_2) / 2
-    return eer
+    return max(eer_1, eer_2)
 
-# label = [1,1,1,1,0,0,0,0]
-# pred = [5, 5, 5, 0, 5, 0, 0, 0]
+# label = [1,1,1,1,1,1,0,0]
+# pred = [1,1,1,1,1,1,1,0]
 # print(compute_eer(label, pred))
 
