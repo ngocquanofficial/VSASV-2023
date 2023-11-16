@@ -8,7 +8,7 @@ import torch
 
 # From ngocquan with love
 from src.naive_dnn.utils import compute_eer,load_embeddings,load_pickle
-from src.fusion.catboost.dataloader import sample_data
+from src.fusion.catboost.dataloader import sample_data, sample_data_only_3
 from src.fusion.catboost.train import train
 def main(args):
     epoch = args.epoch
@@ -20,8 +20,8 @@ def main(args):
     train_dataset = load_pickle(args.train_dataset)
     validation_dataset = load_pickle(args.validation_dataset)
     
-    X_train, y_train = sample_data(ecapa, s2pecnet, lcnn_stft, lcnn_cqt, aasist, train_dataset)
-    X_test, y_test = sample_data(ecapa, s2pecnet, lcnn_stft, lcnn_cqt, aasist, validation_dataset)
+    X_train, y_train = sample_data_only_3(ecapa, s2pecnet, lcnn_stft, lcnn_cqt, aasist, train_dataset)
+    X_test, y_test = sample_data_only_3(ecapa, s2pecnet, lcnn_stft, lcnn_cqt, aasist, validation_dataset)
 
     train(X_train, y_train, X_test, y_test, epoch= epoch)
 

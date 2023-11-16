@@ -17,6 +17,19 @@ def sample_data(ecapa_emb, s2pecnet_emb, lcnn_stft_emb, lcnn_cqt_emb, aasist_emb
         y_label.append(label)
     
     return np.array(X_data), np.array(y_label)
+
+def sample_data_only_3(ecapa_emb, s2pecnet_emb, lcnn_stft_emb, lcnn_cqt_emb, aasist_emb, dataset) :
+    X_data = []
+    y_label = []
+
+    for data in dataset :
+        target, second, label = data
+        emb_concat = np.concatenate((ecapa_emb[target], ecapa_emb[second], s2pecnet_emb[second]), axis= 0)
+    
+        X_data.append(emb_concat)
+        y_label.append(label)
+    
+    return np.array(X_data), np.array(y_label)
             
 
 
