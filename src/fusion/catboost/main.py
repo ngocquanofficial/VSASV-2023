@@ -7,7 +7,7 @@ import torch
 
 # From ngocquan with love
 from src.naive_dnn.utils import compute_eer,load_embeddings,load_pickle
-from src.fusion.catboost.dataloader import sample_data, sample_data_only_3
+from src.fusion.catboost.dataloader import sample_data, sample_data_only_3, sample_data_detect
 from src.fusion.catboost.train import train
 def main(args):
     epoch = args.epoch

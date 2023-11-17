@@ -1,3 +1,2 @@
-a = [1, 2]
-b = [2]
-print(a - b)
+a = "abc////x2"
+print("abc/a" in a)
