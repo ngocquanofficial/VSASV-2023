@@ -5,7 +5,6 @@ import numpy as np
 import argparse
 import torch
 
-
 # From ngocquan with love
 from src.naive_dnn.utils import compute_eer,load_embeddings,load_pickle
 from src.fusion.catboost.dataloader import sample_data, sample_data_only_3
